@@ -12,6 +12,7 @@ from spin_model import SPiNModel
 from sampler import PositiveClassSampler
 from torch.utils.data import random_split
 from datasets import YAS_Dataset
+from torchsummary import summary
 
 def train(train_multimodal_scan_paths,
           train_ground_truth_path,
@@ -144,14 +145,15 @@ def train(train_multimodal_scan_paths,
         all_dataset = YAS_Dataset(
                 image_paths=train_multimodal_scan_paths,
                 ground_truth_paths=train_ground_truth_paths,
-                shape=(n_height, n_width),
+                shape=(1, n_height, n_width),
                 positive_class_sampler=positive_class_sampler)
         
+
+        all_dataset[100]
+
         num_train = int(0.8*len(all_dataset))
         num_valid = int(0.1*len(all_dataset))
         num_test =  len(all_dataset) - num_train - num_valid
-
-
 
         datasets  = random_split(
             all_dataset, [num_train, num_valid, num_test ], generator=torch.Generator()
@@ -207,8 +209,8 @@ def train(train_multimodal_scan_paths,
 
         # input_channels = n_chunk
         # # Set appropriate functions
-        # validate = validateMRI
-        # save_prediction_img = save_MRI_prediction_img
+        validate = validateMRI
+        save_prediction_img = save_MRI_prediction_img
 
     else:
         raise ValueError('Dataset not supported.')
@@ -250,6 +252,8 @@ def train(train_multimodal_scan_paths,
         activation_func=activation_func,
         use_batch_norm=use_batch_norm,
         device=device)
+
+    # summary(model, (YAS_Dataset[0][0].shape))
 
     _, parameters_subpixel_embedding, parameters_segmentation = model.parameters()
 
@@ -450,7 +454,7 @@ def train(train_multimodal_scan_paths,
                         dataloader=val_dataloader,
                         transforms=val_transforms,
                         save_prediction_img=save_prediction_img,
-                        ground_truths=val_ground_truths,
+                        ground_truths=None,
                         step=train_step,
                         log_path=log_path,
                         n_chunk=n_chunk,

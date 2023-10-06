@@ -377,6 +377,9 @@ def constant_padding_template(shape,
     elif input_type == 'CHW' or input_type == 'HWC':
         assert len(constants) == 1
 
+    elif input_type == 'BCHW' or input_type == 'BHWC':
+        assert len(constants) == 1
+
     else:
         raise NotImplementedError
 

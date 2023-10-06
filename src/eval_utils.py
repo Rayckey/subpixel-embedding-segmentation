@@ -539,15 +539,17 @@ def validateMRI(model,
     per_class_recalls = np.zeros((n_samples, n_classes))
 
     # Iterate through each scan
-    for idx, scan in enumerate(dataloader):
+    for idx, scans in enumerate(dataloader):
 
         if ground_truths is not None:
             ground_truth = ground_truths[idx]
             patient_prediction = np.zeros_like(ground_truth)
         else:
-            channel, height, width = scan.shape[1], scan.shape[-2], scan.shape[-1]
+            channel, height, width = scans[1].shape[1], scans[1].shape[-2], scans[1].shape[-1]
+            ground_truth = scans[1]
             patient_prediction = np.zeros((height, width, channel))
 
+        scan = scans[0]
         patient_prediction_time = 0
 
         # Iterate through each chunk of each scan, calculate and store metric

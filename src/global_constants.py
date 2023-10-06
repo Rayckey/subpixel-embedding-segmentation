@@ -19,8 +19,9 @@ DECODER_TYPE_AVAILABLE_SEGMENTATION     = ['subpixel_guidance',
 ENCODER_TYPE_SEGMENTATION               = 'resnet18'
 INPUT_CHANNELS_SEGMENTATION             = 1
 N_FILTERS_ENCODER_SEGMENTATION          = [32, 64, 128, 196, 196]
-DECODER_TYPE_SEGMENTATION               = 'generic'
-N_FILTERS_DECODER_SEGMENTATION          = [196, 128, 64, 32, 16]
+# DECODER_TYPE_SEGMENTATION               = 'generic'
+DECODER_TYPE_SEGMENTATION               = 'subpixel_guidance learnable_downsampler'
+N_FILTERS_DECODER_SEGMENTATION          = [196, 128, 64, 32, 16, 16]
 
 # Subpixel Embedding network settings
 ENCODER_TYPE_AVAILABLE_SUBPIXEL_EMBEDDING = ['resnet5_super_resolution',

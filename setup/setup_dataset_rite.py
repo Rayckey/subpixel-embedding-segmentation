@@ -12,7 +12,7 @@ parser.add_argument('--paths_only', action='store_true')
 args = parser.parse_args()
 
 # Raw data paths
-RITE_RAW_DATA_DIRPATH = os.path.join('data', 'AV_groundTruth')
+RITE_RAW_DATA_DIRPATH = os.path.join( '../', 'AV_groundTruth')
 RITE_RAW_TEST_DATA_DIRPATH = os.path.join(RITE_RAW_DATA_DIRPATH, 'test')
 RITE_RAW_TRAIN_DATA_DIRPATH = os.path.join(RITE_RAW_DATA_DIRPATH, 'training')
 # Test
@@ -25,7 +25,7 @@ RITE_RAW_TRAIN_GROUND_TRUTHS_VESSEL_DIRPATH = os.path.join(RITE_RAW_TRAIN_DATA_D
 RITE_RAW_TRAIN_GROUND_TRUTHS_AV_DIRPATH = os.path.join(RITE_RAW_TRAIN_DATA_DIRPATH, 'av')
 
 # Numpy data paths
-RITE_NUMPY_DATA_DIRPATH = os.path.join('data', 'rite_spin')
+RITE_NUMPY_DATA_DIRPATH = os.path.join('../', 'rite_spin')
 RITE_NUMPY_TEST_DATA_DIRPATH = os.path.join(RITE_NUMPY_DATA_DIRPATH, 'test')
 RITE_NUMPY_TRAIN_DATA_DIRPATH = os.path.join(RITE_NUMPY_DATA_DIRPATH, 'training')
 # Test

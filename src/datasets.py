@@ -43,8 +43,9 @@ class YAS_Dataset(torch.utils.data.Dataset):
         # Dataset paths and shape
         self.image_paths = image_paths
         self.n_sample = len(image_paths)
-        self.n_height = shape[0]
-        self.n_width = shape[1]
+        self.n_chunk = shape[1]
+        self.n_height = shape[1]
+        self.n_width = shape[2]
 
         self.ground_truth_paths = ground_truth_paths
 
@@ -79,15 +80,15 @@ class YAS_Dataset(torch.utils.data.Dataset):
             scan.shape[1] != self.n_width
 
         if do_resize:
-            scan = data_utils.resize(
+            scan = np.expand_dims(data_utils.resize(
                 scan,
                 shape=(self.n_height, self.n_width),
-                interp_type='nearest', data_format='YAS')
+                interp_type='nearest', data_format='YAS'), axis=0)
 
-            ground_truth = data_utils.resize(
+            ground_truth = np.expand_dims(data_utils.resize(
                 ground_truth,
                 shape=(self.n_height, self.n_width),
-                interp_type='nearest', data_format='YAS')
+                interp_type='nearest', data_format='YAS'), axis=0)
 
         return scan.astype(np.float32), ground_truth.astype(np.int64)
 
