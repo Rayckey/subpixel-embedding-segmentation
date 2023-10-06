@@ -1,7 +1,99 @@
 import numpy as np
 import torch.utils.data
 import data_utils
+import cv2
+import os
 
+
+class YAS_Dataset(torch.utils.data.Dataset):
+    '''
+    Dataset for Yas to fetch
+    (1) input scans (supports multimodal)
+    (2) ground truth annotations
+
+    Args:
+        image_paths : list[list[str]]
+            list of list of paths to multiple imaging modalities
+        ground_truth_paths : list[str]
+            list of paths to ground truth annotations
+        shape : tuple[int]
+            (n_chunk, n_height, n_width) tuple
+    '''
+    def __init__(self,
+                 image_paths,
+                 ground_truth_paths,
+                 shape,
+                positive_class_sampler=None):
+
+        # Make sure that input is list of list of strings
+        n_sample = -1
+
+        assert isinstance(image_paths, list)
+
+        for scan_paths in image_paths:
+            # assert isinstance(scan_paths, list)
+            assert len(scan_paths) > 0
+            assert isinstance(scan_paths, str)
+
+            if n_sample == -1:
+                n_sample = len(scan_paths)
+            else:
+                assert len(scan_paths) == n_sample
+
+        # Dataset paths and shape
+        self.image_paths = image_paths
+        self.n_sample = len(image_paths)
+        self.n_height = shape[0]
+        self.n_width = shape[1]
+
+        self.ground_truth_paths = ground_truth_paths
+
+
+        # Augmentation settings
+        self.positive_class_sampler = positive_class_sampler
+        self.padding_constants = [0.]
+
+    def __getitem__(self, index):
+        '''
+        Fetches scan and ground truth annotation
+
+        Arg(s):
+            index : int
+                index of sample in dataset
+        Returns
+            numpy[float32] : H X W input scan
+            numpy[uint64] : H x W ground truth annotations
+        '''
+
+        scan = (cv2.imread(self.image_paths[index],cv2.IMREAD_GRAYSCALE)/255)
+        ground_truth = (cv2.imread(self.ground_truth_paths[index],cv2.IMREAD_GRAYSCALE)/255)
+
+
+        # Account for noise and normalize
+        ground_truth = np.where(ground_truth > 0, 1, 0)
+
+        do_resize = \
+            self.n_height is not None and \
+            self.n_width is not None and \
+            scan.shape[0] != self.n_height and \
+            scan.shape[1] != self.n_width
+
+        if do_resize:
+            scan = data_utils.resize(
+                scan,
+                shape=(self.n_height, self.n_width),
+                interp_type='nearest', data_format='YAS')
+
+            ground_truth = data_utils.resize(
+                ground_truth,
+                shape=(self.n_height, self.n_width),
+                interp_type='nearest', data_format='YAS')
+
+        return scan.astype(np.float32), ground_truth.astype(np.int64)
+
+    def __len__(self):
+        return self.n_sample
+    
 
 class SPiNMRITrainingDataset(torch.utils.data.Dataset):
     '''

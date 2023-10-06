@@ -5,6 +5,24 @@ import torch
 import cv2
 
 
+
+def get_png_paths(filepath):
+    '''
+
+    Arg(s):
+        path : str
+            path to file where data will be stored
+    '''
+
+    path_list = []
+
+    for files in os.listdir(filepath):
+        if files.endswith(('.png', '.PNG')):
+            path_list.append(os.path.join(filepath, files) )
+    path_list.sort()
+    return path_list
+
+
 def read_paths(filepath):
     '''
     Stores a depth map into an image (16 bit PNG)
@@ -432,7 +450,9 @@ def resize(T, shape, interp_type='lanczos', data_format='HWC'):
             R[d, ...] = np.reshape(r, (n_height, n_width, T.shape[3]))
 
     else:
-        raise ValueError('Unsupport data format: {}'.format(data_format))
+        # raise ValueError('Unsupport data format: {}'.format(data_format))
+            # Resize and transpose back to CHW
+            R = cv2.resize(T, dsize=(n_width, n_height), interpolation=interp_type)
 
     return R
 
@@ -447,7 +467,7 @@ def get_scan_type(scan_path):
     Returns:
         str : 'RGB' or 'MRI'
     '''
-    if 'atlas' in scan_path:
-        return 'MRI'
-    elif 'warwick' in scan_path or 'rite' in scan_path:
-        return 'RGB'
+    # if 'atlas' in scan_path:
+    return 'MRI'
+    # elif 'warwick' in scan_path or 'rite' in scan_path:
+    #     return 'RGB'

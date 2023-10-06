@@ -10,12 +10,11 @@ from data_utils import get_scan_type
 from transforms import Transforms
 from spin_model import SPiNModel
 from sampler import PositiveClassSampler
-
+from torch.utils.data import random_split
+from datasets import YAS_Dataset
 
 def train(train_multimodal_scan_paths,
           train_ground_truth_path,
-          val_multimodal_scan_paths,
-          val_ground_truth_path,
           # Input settings
           n_chunk=settings.N_CHUNK,
           n_height=settings.O_HEIGHT,
@@ -95,40 +94,41 @@ def train(train_multimodal_scan_paths,
     log('Training ground truth annotation path:', log_path)
     log(train_ground_truth_path, log_path)
 
-    log('Validation input path(s):', log_path)
-    for path in val_multimodal_scan_paths:
-        log(path, log_path)
-    log('Validation ground truth annotation path:', log_path)
-    log(val_ground_truth_path, log_path)
-    log('', log_path)
+    # log('Validation input path(s):', log_path)
+    # for path in val_multimodal_scan_paths:
+    #     log(path, log_path)
+    # log('Validation ground truth annotation path:', log_path)
+    # log(val_ground_truth_path, log_path)
+    # log('', log_path)
 
     # Read paths for training
-    train_multimodal_scan_paths = [
-        data_utils.read_paths(path) for path in train_multimodal_scan_paths
-    ]
-    train_ground_truth_paths = data_utils.read_paths(train_ground_truth_path)
+    train_multimodal_scan_paths =  data_utils.get_png_paths(train_multimodal_scan_paths) 
+    
+    train_ground_truth_paths = data_utils.get_png_paths(train_ground_truth_path)
 
-    for paths in train_multimodal_scan_paths:
-        assert len(paths) == len(train_ground_truth_paths)
 
-    # Read paths for validation
-    val_multimodal_scan_paths = [
-        data_utils.read_paths(path) for path in val_multimodal_scan_paths
-    ]
-    ground_truth_paths = data_utils.read_paths(val_ground_truth_path)
 
-    for paths in val_multimodal_scan_paths:
-        assert len(paths) == len(ground_truth_paths)
+    # for paths in train_multimodal_scan_paths:
+    #     assert len(paths) == len(train_ground_truth_paths)
 
-    n_train_sample = len(train_multimodal_scan_paths[0])
+    # # Read paths for validation
+    # val_multimodal_scan_paths = [
+    #     data_utils.read_paths(path) for path in val_multimodal_scan_paths
+    # ]
+    # ground_truth_paths = data_utils.read_paths(val_ground_truth_path)
+
+    # for paths in val_multimodal_scan_paths:
+    #     assert len(paths) == len(ground_truth_paths)
+
+    n_train_sample = len(train_multimodal_scan_paths)
     n_train_step = \
         learning_schedule[-1] * np.ceil(n_train_sample / n_batch).astype(np.int32)
 
-    # Load ground truth scans
-    val_ground_truths = []
-    for path in ground_truth_paths:
-        ground_truth = np.where(np.load(path) > 0, 1, 0)
-        val_ground_truths.append(ground_truth)
+    # # Load ground truth scans
+    # val_ground_truths = []
+    # for path in ground_truth_paths:
+    #     ground_truth = np.where(np.load(path) > 0, 1, 0)
+    #     val_ground_truths.append(ground_truth)
 
     positive_class_sampler = PositiveClassSampler(
         positive_class_sample_rates=positive_class_sample_rates,
@@ -139,62 +139,77 @@ def train(train_multimodal_scan_paths,
     scan_type = get_scan_type(train_multimodal_scan_paths[0][0])
     # Training dataloader
     if scan_type == 'MRI':
-        train_dataloader = torch.utils.data.DataLoader(
-            datasets.SPiNMRITrainingDataset(
-                multimodal_scan_paths=train_multimodal_scan_paths,
-                ground_truth_paths=train_ground_truth_paths,
-                shape=(n_chunk, n_height, n_width),
-                padding_constants=dataset_means,
-                positive_class_sampler=positive_class_sampler),
-            batch_size=n_batch,
-            shuffle=True,
-            num_workers=n_thread,
-            drop_last=False)
 
-        # Validation dataloader
-        val_dataloader = torch.utils.data.DataLoader(
-            datasets.SPiNMRIInferenceDataset(
-                multimodal_scan_paths=val_multimodal_scan_paths,
-                shape=(None, None)),
-            batch_size=1,
-            shuffle=False,
-            num_workers=1,
-            drop_last=False)
-
-        val_transforms = Transforms(
-            dataset_means=dataset_means,
-            dataset_stddevs=dataset_stddevs,
-            dataset_normalization=dataset_normalization)
-
-        input_channels = n_chunk
-        # Set appropriate functions
-        validate = validateMRI
-        save_prediction_img = save_MRI_prediction_img
-    elif scan_type == 'RGB':
-        train_dataloader = torch.utils.data.DataLoader(
-            datasets.SPiNRGBTrainingDataset(
-                scan_paths=train_multimodal_scan_paths[0],
+        # train_dataloader = torch.utils.data.DataLoader(
+        all_dataset = YAS_Dataset(
+                image_paths=train_multimodal_scan_paths,
                 ground_truth_paths=train_ground_truth_paths,
                 shape=(n_height, n_width),
-                padding_constant=dataset_means[0]),
+                positive_class_sampler=positive_class_sampler)
+        
+        num_train = int(0.8*len(all_dataset))
+        num_valid = int(0.1*len(all_dataset))
+        num_test =  len(all_dataset) - num_train - num_valid
+
+
+
+        datasets  = random_split(
+            all_dataset, [num_train, num_valid, num_test ], generator=torch.Generator()
+        )
+
+        train_dataloader = torch.utils.data.DataLoader(
+            datasets[0],
             batch_size=n_batch,
             shuffle=True,
             num_workers=n_thread,
             drop_last=False)
 
-        # Validation dataloader
         val_dataloader = torch.utils.data.DataLoader(
-            datasets.SPiNRGBInferenceDataset(
-                scan_paths=val_multimodal_scan_paths[0],
-                shape=(None, None)),
-            batch_size=1,
-            shuffle=False,
-            num_workers=1,
+            datasets[1],
+            batch_size=n_batch,
+            shuffle=True,
+            num_workers=n_thread,
             drop_last=False)
+        
+        tests_dataloader = torch.utils.data.DataLoader(
+            datasets[1],
+            batch_size=n_batch,
+            shuffle=True,
+            num_workers=n_thread,
+            drop_last=False)
+        
+        # train_dataloader = torch.utils.data.DataLoader(
+        #     datasets.SPiNMRITrainingDataset(
+        #         multimodal_scan_paths=train_multimodal_scan_paths,
+        #         ground_truth_paths=train_ground_truth_paths,
+        #         shape=(n_chunk, n_height, n_width),
+        #         padding_constants=dataset_means,
+        #         positive_class_sampler=positive_class_sampler),
+        #     batch_size=n_batch,
+        #     shuffle=True,
+        #     num_workers=n_thread,
+        #     drop_last=False)
 
-        input_channels = 3  # RGB scans have 3 channels
-        validate = validateRGB
-        save_prediction_img = save_RGB_prediction_img
+        # # Validation dataloader
+        # val_dataloader = torch.utils.data.DataLoader(
+        #     datasets.SPiNMRIInferenceDataset(
+        #         multimodal_scan_paths=val_multimodal_scan_paths,
+        #         shape=(None, None)),
+        #     batch_size=1,
+        #     shuffle=False,
+        #     num_workers=1,
+        #     drop_last=False)
+
+        # val_transforms = Transforms(
+        #     dataset_means=dataset_means,
+        #     dataset_stddevs=dataset_stddevs,
+        #     dataset_normalization=dataset_normalization)
+
+        # input_channels = n_chunk
+        # # Set appropriate functions
+        # validate = validateMRI
+        # save_prediction_img = save_MRI_prediction_img
+
     else:
         raise ValueError('Dataset not supported.')
 
@@ -215,7 +230,7 @@ def train(train_multimodal_scan_paths,
 
     # Build SubPixel Network (SPiN)
     model = SPiNModel(
-        input_channels=input_channels,
+        input_channels=1,
         encoder_type_subpixel_embedding=encoder_type_subpixel_embedding,
         n_filters_encoder_subpixel_embedding=n_filters_encoder_subpixel_embedding,
         decoder_type_subpixel_embedding=decoder_type_subpixel_embedding,

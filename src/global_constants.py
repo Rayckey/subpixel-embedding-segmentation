@@ -27,9 +27,10 @@ ENCODER_TYPE_AVAILABLE_SUBPIXEL_EMBEDDING = ['resnet5_super_resolution',
                                              'resnet7_super_resolution',
                                              'none']
 DECODER_TYPE_AVAILABLE_SUBPIXEL_EMBEDDING = ['subpixel', 'none']
-ENCODER_TYPE_SUBPIXEL_EMBEDDING           = 'resnet5_super_resolution'
+# ENCODER_TYPE_SUBPIXEL_EMBEDDING           = 'resnet5_super_resolution'
+ENCODER_TYPE_SUBPIXEL_EMBEDDING =           'resnet5_subpixel_embedding'
 N_FILTERS_ENCODER_SUBPIXEL_EMBEDDING      = [16, 16, 16]
-DECODER_TYPE_SUBPIXEL_EMBEDDING           = 'sub_pixel'
+DECODER_TYPE_SUBPIXEL_EMBEDDING           = 'subpixel'
 N_FILTER_DECODER_SUBPIXEL_EMBEDDING       = 16
 OUTPUT_CHANNELS_SUBPIXEL_EMBEDDING        = 8
 
@@ -71,8 +72,8 @@ LOSS_FUNC_SEGMENTATION                  = ['cross_entropy',
 N_DISPLAY                               = 4
 N_SUMMARY                               = 1000
 N_CHECKPOINT                            = 500
-CHECKPOINT_PATH                         = ''
-RESTORE_PATH                            = ''
+CHECKPOINT_PATH                         = './checkpoints'
+RESTORE_PATH                            = './checkpoints'
 
 # Hardware settings
 DEVICE                                  = 'cuda'
@@ -96,3 +97,9 @@ RITE_MIN                                = 0.0
 RITE_MAX                                = 255.0
 RITE_MEAN                               = 79.09129
 RITE_SD                                 = 70.204414
+
+
+YAS_MIN                               = 0.0
+YAS_MAX                               = 1.0
+YAS_MEAN                              = 30.20063
+YAS_SD                                = 35.221165

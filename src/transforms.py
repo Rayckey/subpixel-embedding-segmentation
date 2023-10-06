@@ -120,6 +120,8 @@ class Transforms(object):
             n_batch, _, n_height, n_width = images_arr[0].shape
         elif n_dim == 5:
             n_batch, _, _, n_height, n_width = images_arr[0].shape
+        elif n_dim == 3:
+            n_batch, n_height, n_width = images_arr[0].shape
         else:
             raise ValueError('Unsupported number of dimensions: {}'.format(n_dim))
 
@@ -132,11 +134,11 @@ class Transforms(object):
         ]
 
         # Normalize images
-        images_arr = self.normalize_images(
-            images_arr,
-            normalization=self.dataset_normalization,
-            means=self.dataset_means,
-            stddevs=self.dataset_stddevs)
+        # images_arr = self.normalize_images(
+        #     images_arr,
+        #     normalization=self.dataset_normalization,
+        #     means=self.dataset_means,
+        #     stddevs=self.dataset_stddevs)
 
         # Intensity augmentations are applied to only images
         if self.do_random_intensity:
