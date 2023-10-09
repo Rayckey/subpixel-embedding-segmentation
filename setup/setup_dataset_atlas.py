@@ -10,7 +10,7 @@ DEBUG = False
 
 
 # Paths
-ATLAS_RAW_DATA_DIRPATH = os.path.join('data', 'atlas', 'atlas_standard')
+ATLAS_RAW_DATA_DIRPATH = os.path.join('./..', 'atlas', 'atlas_standard')
 ATLAS_NUMPY_DATA_DIRPATH = os.path.join('data', 'atlas_spin')
 
 # Paths to the text files to hold all paths to numpy data of scans and ground truth annotations

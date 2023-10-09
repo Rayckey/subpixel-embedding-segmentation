@@ -10,7 +10,7 @@ from data_utils import get_scan_type
 from transforms import Transforms
 from spin_model import SPiNModel
 from sampler import PositiveClassSampler
-
+import pdb
 
 def train(train_multimodal_scan_paths,
           train_ground_truth_path,
@@ -339,6 +339,8 @@ def train(train_multimodal_scan_paths,
     # Start training
     model.train()
 
+    
+    
     for epoch in range(1, n_epoch + 1):
         # Set learning rate schedule
         if epoch > learning_schedule[learning_schedule_pos]:
@@ -381,6 +383,8 @@ def train(train_multimodal_scan_paths,
             # Move data to device
             train_scan = train_scan.to(device)
             train_ground_truth = train_ground_truth.to(device)
+
+            pdb.set_trace()
 
             [train_scan], [train_ground_truth] = train_transforms.transform(
                 images_arr=[train_scan],
@@ -445,6 +449,8 @@ def train(train_multimodal_scan_paths,
 
                 # Switch back to training mode
                 model.train()
+
+    
 
     # Log last step
     log('Step={:6}/{}  Loss={:.5f}  Time Elapsed={:.2f}h  Time Remaining={:.2f}h'.format(
