@@ -33,12 +33,12 @@ class YAS_Dataset(torch.utils.data.Dataset):
         for scan_paths in image_paths:
             # assert isinstance(scan_paths, list)
             assert len(scan_paths) > 0
-            assert isinstance(scan_paths, str)
+            assert isinstance(scan_paths[0], str)
 
             if n_sample == -1:
                 n_sample = len(scan_paths)
-            else:
-                assert len(scan_paths) == n_sample
+            # else:
+            #     assert len(scan_paths) == n_sample
 
         # Dataset paths and shape
         self.image_paths = image_paths
@@ -52,7 +52,7 @@ class YAS_Dataset(torch.utils.data.Dataset):
 
         # Augmentation settings
         self.positive_class_sampler = positive_class_sampler
-        self.padding_constants = [0.]
+        self.padding_constants = [0., 0. ,0. ,0.]
 
     def __getitem__(self, index):
         '''
@@ -66,11 +66,25 @@ class YAS_Dataset(torch.utils.data.Dataset):
             numpy[uint64] : H x W ground truth annotations
         '''
 
-        scan = (cv2.imread(self.image_paths[index],cv2.IMREAD_GRAYSCALE)/255)
-        ground_truth = (cv2.imread(self.ground_truth_paths[index],cv2.IMREAD_GRAYSCALE)/255)
+        # scan = (cv2.imread(self.image_paths[index],cv2.IMREAD_GRAYSCALE)/255)
+        # ground_truth = (cv2.imread(self.ground_truth_paths[index],cv2.IMREAD_GRAYSCALE)/255)
 
+        scans = []
+        ground_truths = []
+        for idx in range(len(self.image_paths[index])):
+            scan_path = self.image_paths[index][idx]
+            # Each scan is H x W
+            scan = (cv2.imread(scan_path,cv2.IMREAD_GRAYSCALE)/255)
+            ground_truth = (cv2.imread(self.ground_truth_paths[index][idx],cv2.IMREAD_GRAYSCALE)/255)
+            # Append scan to list of scans
+            scans.append(scan)
+            ground_truths.append(ground_truth)
 
-        # Account for noise and normalize
+        # Concatenate scans together into D x H x W x C
+        scan = np.stack(scans, axis=0)
+
+        # ground_truths for noise and normalize
+        ground_truth = np.stack(ground_truths, axis=0)
         ground_truth = np.where(ground_truth > 0, 1, 0)
 
         do_resize = \
@@ -83,12 +97,26 @@ class YAS_Dataset(torch.utils.data.Dataset):
             scan = np.expand_dims(data_utils.resize(
                 scan,
                 shape=(self.n_height, self.n_width),
-                interp_type='nearest', data_format='YAS'), axis=0)
+                interp_type='nearest', data_format='DHW'), axis=0)
 
             ground_truth = np.expand_dims(data_utils.resize(
                 ground_truth,
                 shape=(self.n_height, self.n_width),
-                interp_type='nearest', data_format='YAS'), axis=0)
+                interp_type='nearest', data_format='DHW'), axis=0)
+
+        # if do_resize:
+        #     scan = data_utils.resize(
+        #         scan,
+        #         shape=(self.n_height, self.n_width),
+        #         interp_type='nearest',
+        #         data_format=scan_data_format)
+
+        #     ground_truth = data_utils.resize(
+        #         ground_truth,
+        #         shape=(self.n_height, self.n_width),
+        #         interp_type='nearest',
+        #         data_format=ground_truth_data_format)
+
 
         return scan.astype(np.float32), ground_truth.astype(np.int64)
 

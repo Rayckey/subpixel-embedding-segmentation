@@ -16,10 +16,14 @@ def get_png_paths(filepath):
 
     path_list = []
 
-    for files in os.listdir(filepath):
-        if files.endswith(('.png', '.PNG')):
-            path_list.append(os.path.join(filepath, files) )
-    path_list.sort()
+    for folder in os.listdir(filepath):
+        if os.path.isdir(os.path.join(filepath, folder) ):
+            _paths = []
+            for files in os.listdir(os.path.join(filepath, folder) ):
+                if files.endswith(('.png', '.PNG')):
+                    _paths.append(os.path.join(filepath, folder, files) )
+            _paths.sort()
+            path_list.append(_paths)
     return path_list
 
 
@@ -452,10 +456,11 @@ def resize(T, shape, interp_type='lanczos', data_format='HWC'):
             r = cv2.resize(T[d, ...], dsize=(n_width, n_height), interpolation=interp_type)
             R[d, ...] = np.reshape(r, (n_height, n_width, T.shape[3]))
 
-    else:
-        # raise ValueError('Unsupport data format: {}'.format(data_format))
-            # Resize and transpose back to CHW
-            R = cv2.resize(T, dsize=(n_width, n_height), interpolation=interp_type)
+    elif data_format == 'DHW':
+        R = np.zeros((T.shape[0], n_height, n_width))
+        for d in range(R.shape[0]):
+            r = cv2.resize(T[d, ...], dsize=(n_width, n_height), interpolation=interp_type)
+            R[d, ...] = np.reshape(r, (n_height, n_width))
 
     return R
 

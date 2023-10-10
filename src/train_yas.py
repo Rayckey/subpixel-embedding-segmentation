@@ -162,8 +162,8 @@ if __name__ == '__main__':
         args.n_width = None
 
     train(
-        train_multimodal_scan_paths = "../Labeled/Originals_samename/image",
-        train_ground_truth_path= "../Labeled/Masks_samename/mask",
+        train_multimodal_scan_paths = "../Labeled2/Originals_samename/image",
+        train_ground_truth_path= "../Labeled2/Masks_samename/mask",
         # Batch settings
         n_batch=args.n_batch,
         n_height=args.n_height,

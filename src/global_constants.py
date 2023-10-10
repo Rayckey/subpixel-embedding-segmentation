@@ -1,5 +1,5 @@
 # Batch settings
-N_BATCH                                 = 8
+N_BATCH                                 = 1
 O_HEIGHT                                = 197
 O_WIDTH                                 = 233
 N_CHUNK                                 = 1
@@ -81,7 +81,7 @@ DEVICE                                  = 'cuda'
 CUDA                                    = 'cuda'
 CPU                                     = 'cpu'
 GPU                                     = 'gpu'
-N_THREAD                                = 8
+N_THREAD                                = 1
 
 # Dataset Constants
 ATLAS_MIN                               = -3.316535e-05
