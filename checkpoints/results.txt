@@ -1,0 +1,1273 @@
+Training input path(s):
+.
+.
+/
+L
+a
+b
+e
+l
+e
+d
+2
+/
+O
+r
+i
+g
+i
+n
+a
+l
+s
+_
+s
+a
+m
+e
+n
+a
+m
+e
+/
+i
+m
+a
+g
+e
+Training ground truth annotation path:
+../Labeled2/Masks_samename/mask
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+o
+r
+i
+g
+i
+n
+a
+l
+_
+v
+s
+c
+a
+n
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_vscan
+Input settings:
+n_batch=1  n_chunk=1  n_height=197  n_width=233
+
+Normalization settings:
+dataset_normalization=standard
+dataset_means=[30.20063]
+dataset_stddevs=[35.221165]
+
+Subpixel embedding network settings:
+encoder_type=resnet5_subpixel_embedding
+n_filters_encoder=[16, 16, 16]
+decoder_type=subpixel
+n_filter_decoder=16  output_channels=8
+output_func=linear
+Subpixel guidance settings:
+resolutions=[0, 1]
+n_filters=[8, 8]
+n_convolutions=[1, 1]
+
+Segmentation network settings:
+encoder_type=resnet18
+n_filters_encoder=[32, 64, 128, 196, 196]
+decoder_type=subpixel_guidance learnable_downsampler
+n_filters_decoder=[196, 128, 64, 32, 16, 16]
+
+Learnable downsampler settings:
+use_learnable_downsampler=True
+n_filters_learnable_downsampler=[16, 16]
+kernel_sizes_learnable_downsampler=[3, 3]
+
+Weight settings:
+Parameters: n_parameter=5249040  n_parameter_segmentation=5234432  n_parameter_subpixel_embedding=14608
+weight_initializer=kaiming_uniform  activation_func=leaky_relu  use_batch_norm=False
+
+Subpixel embedding loss function settings:
+w_weight_decay=1.0e-04
+
+Segmentation loss function settings:
+loss_func=['cross_entropy', 'weight_decay']
+w_weight_decay=1.0e-04  w_positive_class=[1.0]
+
+Training settings:
+n_sample=4  n_epoch=1600  n_step=6400
+Schedule format: [epoch (step) : value]
+learning_schedule=[0-400 (0-1600) : 0.0003, 400-1400 (1600-5600) : 0.0001, 1400-1600 (5600-6400) : 5e-05]
+positive_class_sample_rate_schedule=[0-1600 (0-6400) : 0.95]
+positive_class_size_thresholds=[0]
+augmentation_schedule=[0-1600 (0-6400) : 0.5]
+augmentation_flip_type=['horizontal', 'vertical']
+augmentation_rotate=-1.0
+augmentation_noise_type=none  augmentation_noise_spread=-1
+augmentation_resize_and_pad=[-1, -1]
+
+Checkpoint settings:
+checkpoint_path=./checkpoints
+checkpoint_save_frequency=500  tensorboard_summary_frequency=1000
+
+Hardware settings:
+device=cpu
+n_thread=1
+
+Begin training...
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+o
+r
+i
+g
+i
+n
+a
+l
+_
+v
+s
+c
+a
+n
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_vscan
+Input settings:
+n_batch=1  n_chunk=1  n_height=197  n_width=233
+
+Normalization settings:
+dataset_normalization=standard
+dataset_means=[30.20063]
+dataset_stddevs=[35.221165]
+
+Subpixel embedding network settings:
+encoder_type=resnet5_subpixel_embedding
+n_filters_encoder=[16, 16, 16]
+decoder_type=subpixel
+n_filter_decoder=16  output_channels=8
+output_func=linear
+Subpixel guidance settings:
+resolutions=[0, 1]
+n_filters=[8, 8]
+n_convolutions=[1, 1]
+
+Segmentation network settings:
+encoder_type=resnet18
+n_filters_encoder=[32, 64, 128, 196, 196]
+decoder_type=subpixel_guidance learnable_downsampler
+n_filters_decoder=[196, 128, 64, 32, 16, 16]
+
+Learnable downsampler settings:
+use_learnable_downsampler=True
+n_filters_learnable_downsampler=[16, 16]
+kernel_sizes_learnable_downsampler=[3, 3]
+
+Weight settings:
+Parameters: n_parameter=5249040  n_parameter_segmentation=5234432  n_parameter_subpixel_embedding=14608
+weight_initializer=kaiming_uniform  activation_func=leaky_relu  use_batch_norm=False
+
+Subpixel embedding loss function settings:
+w_weight_decay=1.0e-04
+
+Segmentation loss function settings:
+loss_func=['cross_entropy', 'weight_decay']
+w_weight_decay=1.0e-04  w_positive_class=[1.0]
+
+Training settings:
+n_sample=4  n_epoch=1600  n_step=6400
+Schedule format: [epoch (step) : value]
+learning_schedule=[0-400 (0-1600) : 0.0003, 400-1400 (1600-5600) : 0.0001, 1400-1600 (5600-6400) : 5e-05]
+positive_class_sample_rate_schedule=[0-1600 (0-6400) : 0.95]
+positive_class_size_thresholds=[0]
+augmentation_schedule=[0-1600 (0-6400) : 0.5]
+augmentation_flip_type=['horizontal', 'vertical']
+augmentation_rotate=-1.0
+augmentation_noise_type=none  augmentation_noise_spread=-1
+augmentation_resize_and_pad=[-1, -1]
+
+Checkpoint settings:
+checkpoint_path=./checkpoints
+checkpoint_save_frequency=500  tensorboard_summary_frequency=1000
+
+Hardware settings:
+device=cpu
+n_thread=1
+
+Begin training...
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+O
+r
+i
+g
+i
+n
+a
+l
+s
+_
+s
+a
+m
+e
+n
+a
+m
+e
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_samename
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+O
+r
+i
+g
+i
+n
+a
+l
+s
+_
+s
+a
+m
+e
+n
+a
+m
+e
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_samename
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+O
+r
+i
+g
+i
+n
+a
+l
+s
+_
+s
+a
+m
+e
+n
+a
+m
+e
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_samename
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+o
+r
+i
+g
+i
+n
+a
+l
+_
+v
+s
+c
+a
+n
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_vscan
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+O
+r
+i
+g
+i
+n
+a
+l
+s
+_
+s
+a
+m
+e
+n
+a
+m
+e
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_samename
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+O
+r
+i
+g
+i
+n
+a
+l
+s
+_
+s
+a
+m
+e
+n
+a
+m
+e
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_samename
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+O
+r
+i
+g
+i
+n
+a
+l
+s
+_
+s
+a
+m
+e
+n
+a
+m
+e
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_samename
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+O
+r
+i
+g
+i
+n
+a
+l
+s
+_
+s
+a
+m
+e
+n
+a
+m
+e
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_samename
+Input settings:
+n_batch=1  n_chunk=1  n_height=197  n_width=233
+
+Normalization settings:
+dataset_normalization=standard
+dataset_means=[30.20063]
+dataset_stddevs=[35.221165]
+
+Subpixel embedding network settings:
+encoder_type=resnet5_subpixel_embedding
+n_filters_encoder=[16, 16, 16]
+decoder_type=subpixel
+n_filter_decoder=16  output_channels=8
+output_func=linear
+Subpixel guidance settings:
+resolutions=[0, 1]
+n_filters=[8, 8]
+n_convolutions=[1, 1]
+
+Segmentation network settings:
+encoder_type=resnet18
+n_filters_encoder=[32, 64, 128, 196, 196]
+decoder_type=subpixel_guidance learnable_downsampler
+n_filters_decoder=[196, 128, 64, 32, 16, 16]
+
+Learnable downsampler settings:
+use_learnable_downsampler=True
+n_filters_learnable_downsampler=[16, 16]
+kernel_sizes_learnable_downsampler=[3, 3]
+
+Weight settings:
+Parameters: n_parameter=5249040  n_parameter_segmentation=5234432  n_parameter_subpixel_embedding=14608
+weight_initializer=kaiming_uniform  activation_func=leaky_relu  use_batch_norm=False
+
+Subpixel embedding loss function settings:
+w_weight_decay=1.0e-04
+
+Segmentation loss function settings:
+loss_func=['cross_entropy', 'weight_decay']
+w_weight_decay=1.0e-04  w_positive_class=[1.0]
+
+Training settings:
+n_sample=730  n_epoch=1600  n_step=1168000
+Schedule format: [epoch (step) : value]
+learning_schedule=[0-400 (0-292000) : 0.0003, 400-1400 (292000-1022000) : 0.0001, 1400-1600 (1022000-1168000) : 5e-05]
+positive_class_sample_rate_schedule=[0-1600 (0-1168000) : 0.95]
+positive_class_size_thresholds=[0]
+augmentation_schedule=[0-1600 (0-1168000) : 0.5]
+augmentation_flip_type=['horizontal', 'vertical']
+augmentation_rotate=-1.0
+augmentation_noise_type=none  augmentation_noise_spread=-1
+augmentation_resize_and_pad=[-1, -1]
+
+Checkpoint settings:
+checkpoint_path=./checkpoints
+checkpoint_save_frequency=500  tensorboard_summary_frequency=1000
+
+Hardware settings:
+device=cpu
+n_thread=1
+
+Begin training...
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+O
+r
+i
+g
+i
+n
+a
+l
+s
+_
+s
+a
+m
+e
+n
+a
+m
+e
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_samename
+Input settings:
+n_batch=1  n_chunk=1  n_height=197  n_width=233
+
+Normalization settings:
+dataset_normalization=standard
+dataset_means=[30.20063]
+dataset_stddevs=[35.221165]
+
+Subpixel embedding network settings:
+encoder_type=resnet5_subpixel_embedding
+n_filters_encoder=[16, 16, 16]
+decoder_type=subpixel
+n_filter_decoder=16  output_channels=8
+output_func=linear
+Subpixel guidance settings:
+resolutions=[0, 1]
+n_filters=[8, 8]
+n_convolutions=[1, 1]
+
+Segmentation network settings:
+encoder_type=resnet18
+n_filters_encoder=[32, 64, 128, 196, 196]
+decoder_type=subpixel_guidance learnable_downsampler
+n_filters_decoder=[196, 128, 64, 32, 16, 16]
+
+Learnable downsampler settings:
+use_learnable_downsampler=True
+n_filters_learnable_downsampler=[16, 16]
+kernel_sizes_learnable_downsampler=[3, 3]
+
+Weight settings:
+Parameters: n_parameter=5249040  n_parameter_segmentation=5234432  n_parameter_subpixel_embedding=14608
+weight_initializer=kaiming_uniform  activation_func=leaky_relu  use_batch_norm=False
+
+Subpixel embedding loss function settings:
+w_weight_decay=1.0e-04
+
+Segmentation loss function settings:
+loss_func=['cross_entropy', 'weight_decay']
+w_weight_decay=1.0e-04  w_positive_class=[1.0]
+
+Training settings:
+n_sample=730  n_epoch=1600  n_step=1168000
+Schedule format: [epoch (step) : value]
+learning_schedule=[0-400 (0-292000) : 0.0003, 400-1400 (292000-1022000) : 0.0001, 1400-1600 (1022000-1168000) : 5e-05]
+positive_class_sample_rate_schedule=[0-1600 (0-1168000) : 0.95]
+positive_class_size_thresholds=[0]
+augmentation_schedule=[0-1600 (0-1168000) : 0.5]
+augmentation_flip_type=['horizontal', 'vertical']
+augmentation_rotate=-1.0
+augmentation_noise_type=none  augmentation_noise_spread=-1
+augmentation_resize_and_pad=[-1, -1]
+
+Checkpoint settings:
+checkpoint_path=./checkpoints
+checkpoint_save_frequency=500  tensorboard_summary_frequency=1000
+
+Hardware settings:
+device=cpu
+n_thread=1
+
+Begin training...
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+O
+r
+i
+g
+i
+n
+a
+l
+s
+_
+s
+a
+m
+e
+n
+a
+m
+e
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_samename
+Input settings:
+n_batch=1  n_chunk=1  n_height=197  n_width=233
+
+Normalization settings:
+dataset_normalization=standard
+dataset_means=[30.20063]
+dataset_stddevs=[35.221165]
+
+Subpixel embedding network settings:
+encoder_type=resnet5_subpixel_embedding
+n_filters_encoder=[16, 16, 16]
+decoder_type=subpixel
+n_filter_decoder=16  output_channels=8
+output_func=linear
+Subpixel guidance settings:
+resolutions=[0, 1]
+n_filters=[8, 8]
+n_convolutions=[1, 1]
+
+Segmentation network settings:
+encoder_type=resnet18
+n_filters_encoder=[32, 64, 128, 196, 196]
+decoder_type=subpixel_guidance learnable_downsampler
+n_filters_decoder=[196, 128, 64, 32, 16, 16]
+
+Learnable downsampler settings:
+use_learnable_downsampler=True
+n_filters_learnable_downsampler=[16, 16]
+kernel_sizes_learnable_downsampler=[3, 3]
+
+Weight settings:
+Parameters: n_parameter=5249040  n_parameter_segmentation=5234432  n_parameter_subpixel_embedding=14608
+weight_initializer=kaiming_uniform  activation_func=leaky_relu  use_batch_norm=False
+
+Subpixel embedding loss function settings:
+w_weight_decay=1.0e-04
+
+Segmentation loss function settings:
+loss_func=['cross_entropy', 'weight_decay']
+w_weight_decay=1.0e-04  w_positive_class=[1.0]
+
+Training settings:
+n_sample=730  n_epoch=1600  n_step=1168000
+Schedule format: [epoch (step) : value]
+learning_schedule=[0-400 (0-292000) : 0.0003, 400-1400 (292000-1022000) : 0.0001, 1400-1600 (1022000-1168000) : 5e-05]
+positive_class_sample_rate_schedule=[0-1600 (0-1168000) : 0.95]
+positive_class_size_thresholds=[0]
+augmentation_schedule=[0-1600 (0-1168000) : 0.5]
+augmentation_flip_type=['horizontal', 'vertical']
+augmentation_rotate=-1.0
+augmentation_noise_type=none  augmentation_noise_spread=-1
+augmentation_resize_and_pad=[-1, -1]
+
+Checkpoint settings:
+checkpoint_path=./checkpoints
+checkpoint_save_frequency=500  tensorboard_summary_frequency=1000
+
+Hardware settings:
+device=cpu
+n_thread=1
+
+Begin training...
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+O
+r
+i
+g
+i
+n
+a
+l
+s
+_
+s
+a
+m
+e
+n
+a
+m
+e
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_samename
+Input settings:
+n_batch=1  n_chunk=1  n_height=197  n_width=233
+
+Normalization settings:
+dataset_normalization=standard
+dataset_means=[30.20063]
+dataset_stddevs=[35.221165]
+
+Subpixel embedding network settings:
+encoder_type=resnet5_subpixel_embedding
+n_filters_encoder=[16, 16, 16]
+decoder_type=subpixel
+n_filter_decoder=16  output_channels=8
+output_func=linear
+Subpixel guidance settings:
+resolutions=[0, 1]
+n_filters=[8, 8]
+n_convolutions=[1, 1]
+
+Segmentation network settings:
+encoder_type=resnet18
+n_filters_encoder=[32, 64, 128, 196, 196]
+decoder_type=subpixel_guidance learnable_downsampler
+n_filters_decoder=[196, 128, 64, 32, 16, 16]
+
+Learnable downsampler settings:
+use_learnable_downsampler=True
+n_filters_learnable_downsampler=[16, 16]
+kernel_sizes_learnable_downsampler=[3, 3]
+
+Weight settings:
+Parameters: n_parameter=5249040  n_parameter_segmentation=5234432  n_parameter_subpixel_embedding=14608
+weight_initializer=kaiming_uniform  activation_func=leaky_relu  use_batch_norm=False
+
+Subpixel embedding loss function settings:
+w_weight_decay=1.0e-04
+
+Segmentation loss function settings:
+loss_func=['cross_entropy', 'weight_decay']
+w_weight_decay=1.0e-04  w_positive_class=[1.0]
+
+Training settings:
+n_sample=730  n_epoch=1600  n_step=1168000
+Schedule format: [epoch (step) : value]
+learning_schedule=[0-400 (0-292000) : 0.0003, 400-1400 (292000-1022000) : 0.0001, 1400-1600 (1022000-1168000) : 5e-05]
+positive_class_sample_rate_schedule=[0-1600 (0-1168000) : 0.95]
+positive_class_size_thresholds=[0]
+augmentation_schedule=[0-1600 (0-1168000) : 0.5]
+augmentation_flip_type=['horizontal', 'vertical']
+augmentation_rotate=-1.0
+augmentation_noise_type=none  augmentation_noise_spread=-1
+augmentation_resize_and_pad=[-1, -1]
+
+Checkpoint settings:
+checkpoint_path=./checkpoints
+checkpoint_save_frequency=500  tensorboard_summary_frequency=1000
+
+Hardware settings:
+device=cpu
+n_thread=1
+
+Begin training...
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+O
+r
+i
+g
+i
+n
+a
+l
+s
+_
+s
+a
+m
+e
+n
+a
+m
+e
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_samename
+Input settings:
+n_batch=1  n_chunk=1  n_height=197  n_width=233
+
+Normalization settings:
+dataset_normalization=standard
+dataset_means=[30.20063]
+dataset_stddevs=[35.221165]
+
+Subpixel embedding network settings:
+encoder_type=resnet5_subpixel_embedding
+n_filters_encoder=[16, 16, 16]
+decoder_type=subpixel
+n_filter_decoder=16  output_channels=8
+output_func=linear
+Subpixel guidance settings:
+resolutions=[0, 1]
+n_filters=[8, 8]
+n_convolutions=[1, 1]
+
+Segmentation network settings:
+encoder_type=resnet18
+n_filters_encoder=[32, 64, 128, 196, 196]
+decoder_type=subpixel_guidance learnable_downsampler
+n_filters_decoder=[196, 128, 64, 32, 16, 16]
+
+Learnable downsampler settings:
+use_learnable_downsampler=True
+n_filters_learnable_downsampler=[16, 16]
+kernel_sizes_learnable_downsampler=[3, 3]
+
+Weight settings:
+Parameters: n_parameter=5249040  n_parameter_segmentation=5234432  n_parameter_subpixel_embedding=14608
+weight_initializer=kaiming_uniform  activation_func=leaky_relu  use_batch_norm=False
+
+Subpixel embedding loss function settings:
+w_weight_decay=1.0e-04
+
+Segmentation loss function settings:
+loss_func=['cross_entropy', 'weight_decay']
+w_weight_decay=1.0e-04  w_positive_class=[1.0]
+
+Training settings:
+n_sample=730  n_epoch=1600  n_step=1168000
+Schedule format: [epoch (step) : value]
+learning_schedule=[0-400 (0-292000) : 0.0003, 400-1400 (292000-1022000) : 0.0001, 1400-1600 (1022000-1168000) : 5e-05]
+positive_class_sample_rate_schedule=[0-1600 (0-1168000) : 0.95]
+positive_class_size_thresholds=[0]
+augmentation_schedule=[0-1600 (0-1168000) : 0.5]
+augmentation_flip_type=['horizontal', 'vertical']
+augmentation_rotate=-1.0
+augmentation_noise_type=none  augmentation_noise_spread=-1
+augmentation_resize_and_pad=[-1, -1]
+
+Checkpoint settings:
+checkpoint_path=./checkpoints
+checkpoint_save_frequency=500  tensorboard_summary_frequency=1000
+
+Hardware settings:
+device=cpu
+n_thread=1
+
+Begin training...
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+O
+r
+i
+g
+i
+n
+a
+l
+s
+_
+s
+a
+m
+e
+n
+a
+m
+e
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_samename
+Input settings:
+n_batch=1  n_chunk=1  n_height=197  n_width=233
+
+Normalization settings:
+dataset_normalization=standard
+dataset_means=[30.20063]
+dataset_stddevs=[35.221165]
+
+Subpixel embedding network settings:
+encoder_type=resnet5_subpixel_embedding
+n_filters_encoder=[16, 16, 16]
+decoder_type=subpixel
+n_filter_decoder=16  output_channels=8
+output_func=linear
+Subpixel guidance settings:
+resolutions=[0, 1]
+n_filters=[8, 8]
+n_convolutions=[1, 1]
+
+Segmentation network settings:
+encoder_type=resnet18
+n_filters_encoder=[32, 64, 128, 196, 196]
+decoder_type=subpixel_guidance learnable_downsampler
+n_filters_decoder=[196, 128, 64, 32, 16, 16]
+
+Learnable downsampler settings:
+use_learnable_downsampler=True
+n_filters_learnable_downsampler=[16, 16]
+kernel_sizes_learnable_downsampler=[3, 3]
+
+Weight settings:
+Parameters: n_parameter=5249040  n_parameter_segmentation=5234432  n_parameter_subpixel_embedding=14608
+weight_initializer=kaiming_uniform  activation_func=leaky_relu  use_batch_norm=False
+
+Subpixel embedding loss function settings:
+w_weight_decay=1.0e-04
+
+Segmentation loss function settings:
+loss_func=['cross_entropy', 'weight_decay']
+w_weight_decay=1.0e-04  w_positive_class=[1.0]
+
+Training settings:
+n_sample=730  n_epoch=1600  n_step=1168000
+Schedule format: [epoch (step) : value]
+learning_schedule=[0-400 (0-292000) : 0.0003, 400-1400 (292000-1022000) : 0.0001, 1400-1600 (1022000-1168000) : 5e-05]
+positive_class_sample_rate_schedule=[0-1600 (0-1168000) : 0.95]
+positive_class_size_thresholds=[0]
+augmentation_schedule=[0-1600 (0-1168000) : 0.5]
+augmentation_flip_type=['horizontal', 'vertical']
+augmentation_rotate=-1.0
+augmentation_noise_type=none  augmentation_noise_spread=-1
+augmentation_resize_and_pad=[-1, -1]
+
+Checkpoint settings:
+checkpoint_path=./checkpoints
+checkpoint_save_frequency=500  tensorboard_summary_frequency=1000
+
+Hardware settings:
+device=cpu
+n_thread=1
+
+Begin training...
+Training input path(s):
+.
+.
+/
+.
+.
+/
+.
+.
+/
+D
+a
+t
+a
+/
+L
+a
+b
+e
+l
+e
+d
+/
+O
+r
+i
+g
+i
+n
+a
+l
+s
+_
+s
+a
+m
+e
+n
+a
+m
+e
+Training ground truth annotation path:
+../../../Data/Labeled/Masks_samename
+Input settings:
+n_batch=1  n_chunk=1  n_height=197  n_width=233
+
+Normalization settings:
+dataset_normalization=standard
+dataset_means=[30.20063]
+dataset_stddevs=[35.221165]
+
+Subpixel embedding network settings:
+encoder_type=resnet5_subpixel_embedding
+n_filters_encoder=[16, 16, 16]
+decoder_type=subpixel
+n_filter_decoder=16  output_channels=8
+output_func=linear
+Subpixel guidance settings:
+resolutions=[0, 1]
+n_filters=[8, 8]
+n_convolutions=[1, 1]
+
+Segmentation network settings:
+encoder_type=resnet18
+n_filters_encoder=[32, 64, 128, 196, 196]
+decoder_type=subpixel_guidance learnable_downsampler
+n_filters_decoder=[196, 128, 64, 32, 16, 16]
+
+Learnable downsampler settings:
+use_learnable_downsampler=True
+n_filters_learnable_downsampler=[16, 16]
+kernel_sizes_learnable_downsampler=[3, 3]
+
+Weight settings:
+Parameters: n_parameter=5249040  n_parameter_segmentation=5234432  n_parameter_subpixel_embedding=14608
+weight_initializer=kaiming_uniform  activation_func=leaky_relu  use_batch_norm=False
+
+Subpixel embedding loss function settings:
+w_weight_decay=1.0e-04
+
+Segmentation loss function settings:
+loss_func=['cross_entropy', 'weight_decay']
+w_weight_decay=1.0e-04  w_positive_class=[1.0]
+
+Training settings:
+n_sample=730  n_epoch=1600  n_step=1168000
+Schedule format: [epoch (step) : value]
+learning_schedule=[0-400 (0-292000) : 0.0003, 400-1400 (292000-1022000) : 0.0001, 1400-1600 (1022000-1168000) : 5e-05]
+positive_class_sample_rate_schedule=[0-1600 (0-1168000) : 0.95]
+positive_class_size_thresholds=[0]
+augmentation_schedule=[0-1600 (0-1168000) : 0.5]
+augmentation_flip_type=['horizontal', 'vertical']
+augmentation_rotate=-1.0
+augmentation_noise_type=none  augmentation_noise_spread=-1
+augmentation_resize_and_pad=[-1, -1]
+
+Checkpoint settings:
+checkpoint_path=./checkpoints
+checkpoint_save_frequency=500  tensorboard_summary_frequency=1000
+
+Hardware settings:
+device=cpu
+n_thread=1
+
+Begin training...

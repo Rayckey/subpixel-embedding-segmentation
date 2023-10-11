@@ -77,7 +77,7 @@ CHECKPOINT_PATH                         = './checkpoints'
 RESTORE_PATH                            = './checkpoints'
 
 # Hardware settings
-DEVICE                                  = 'cuda'
+DEVICE                                  = 'cpu'
 CUDA                                    = 'cuda'
 CPU                                     = 'cpu'
 GPU                                     = 'gpu'
@@ -102,5 +102,5 @@ RITE_SD                                 = 70.204414
 
 YAS_MIN                               = 0.0
 YAS_MAX                               = 1.0
-YAS_MEAN                              = 30.20063
-YAS_SD                                = 35.221165
+YAS_MEAN                              = 0.01 # 30.20063
+YAS_SD                                = 0.005 # 35.221165

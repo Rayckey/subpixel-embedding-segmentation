@@ -151,15 +151,15 @@ def train(train_multimodal_scan_paths,
 
         # all_dataset[0]
 
-        # num_train = int(0.8*len(all_dataset))
-        # num_valid = int(0.1*len(all_dataset))
-        # num_test =  len(all_dataset) - num_train - num_valid
-        num_train = 3
-        num_valid = 1
+        num_train = int(0.8*len(all_dataset))
+        num_valid = int(0.1*len(all_dataset))
+        num_test =  len(all_dataset) - num_train - num_valid
+        # num_train = 3
+        # num_valid = 1
         # num_test = 1
 
         datasets  = random_split(
-            all_dataset, [num_train, num_valid ], generator=torch.Generator()
+            all_dataset, [num_train, num_valid, num_test ], generator=torch.Generator()
         )
 
         train_dataloader = torch.utils.data.DataLoader(

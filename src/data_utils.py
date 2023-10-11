@@ -16,14 +16,18 @@ def get_png_paths(filepath):
 
     path_list = []
 
-    for folder in os.listdir(filepath):
-        if os.path.isdir(os.path.join(filepath, folder) ):
-            _paths = []
-            for files in os.listdir(os.path.join(filepath, folder) ):
-                if files.endswith(('.png', '.PNG')):
-                    _paths.append(os.path.join(filepath, folder, files) )
-            _paths.sort()
-            path_list.append(_paths)
+    # for folder in os.listdir(filepath):
+    #     if os.path.isdir(os.path.join(filepath, folder) ):
+    #         _paths = []
+    #         for files in os.listdir(os.path.join(filepath, folder) ):
+    #             if files.endswith(('.png', '.PNG')):
+    #                 _paths.append(os.path.join(filepath, folder, files) )
+    #         _paths.sort()
+    #         path_list.append(_paths)
+    for files in os.listdir(filepath):
+        if files.endswith(('.png', '.PNG')):
+            path_list.append(os.path.join(filepath, files) )
+    path_list.sort()
     return path_list
 
 
@@ -461,6 +465,11 @@ def resize(T, shape, interp_type='lanczos', data_format='HWC'):
         for d in range(R.shape[0]):
             r = cv2.resize(T[d, ...], dsize=(n_width, n_height), interpolation=interp_type)
             R[d, ...] = np.reshape(r, (n_height, n_width))
+    
+    elif data_format == 'HW':
+        R = np.zeros((n_height, n_width))
+        r = cv2.resize(T, dsize=(n_width, n_height), interpolation=interp_type)
+        R = np.reshape(r, (n_height, n_width))
 
     return R
 

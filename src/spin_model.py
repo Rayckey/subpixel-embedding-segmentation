@@ -401,7 +401,8 @@ class SPiNModel(object):
             ground_truth = ground_truth.long()
         else:
             height, width = target_height, target_width
-        self.output_logits = output_logits[-1].squeeze(dim=1)
+        #self.output_logits = output_logits[-1].squeeze(dim=1)
+        self.output_logits = output_logits[-1]
 
         # Squeeze ground truth to N x H x W
         self.ground_truth = ground_truth.squeeze(1)

@@ -66,25 +66,27 @@ class YAS_Dataset(torch.utils.data.Dataset):
             numpy[uint64] : H x W ground truth annotations
         '''
 
-        # scan = (cv2.imread(self.image_paths[index],cv2.IMREAD_GRAYSCALE)/255)
-        # ground_truth = (cv2.imread(self.ground_truth_paths[index],cv2.IMREAD_GRAYSCALE)/255)
+        scan = (cv2.imread(self.image_paths[index],cv2.IMREAD_GRAYSCALE)/255)
+        ground_truth = (cv2.imread(self.ground_truth_paths[index],cv2.IMREAD_GRAYSCALE)/255)
 
-        scans = []
-        ground_truths = []
-        for idx in range(len(self.image_paths[index])):
-            scan_path = self.image_paths[index][idx]
-            # Each scan is H x W
-            scan = (cv2.imread(scan_path,cv2.IMREAD_GRAYSCALE)/255)
-            ground_truth = (cv2.imread(self.ground_truth_paths[index][idx],cv2.IMREAD_GRAYSCALE)/255)
-            # Append scan to list of scans
-            scans.append(scan)
-            ground_truths.append(ground_truth)
+        # scans = []
+        # ground_truths = []
+        # for idx in range(len(self.image_paths[index])):
+        #     scan_path = self.image_paths[index][idx]
+        #     # Each scan is H x W
+        #     scan = (cv2.imread(scan_path,cv2.IMREAD_GRAYSCALE)/255)
+        #     ground_truth = (cv2.imread(self.ground_truth_paths[index][idx],cv2.IMREAD_GRAYSCALE)/255)
+        #     # Append scan to list of scans
+        #     scans.append(scan)
+        #     ground_truths.append(ground_truth)
 
-        # Concatenate scans together into D x H x W x C
-        scan = np.stack(scans, axis=0)
+        # # Concatenate scans together into D x H x W x C
+        # scan = np.stack(scan, axis=0)
+        scan = scan[np.newaxis,:,:]
 
-        # ground_truths for noise and normalize
-        ground_truth = np.stack(ground_truths, axis=0)
+        # # ground_truths for noise and normalize
+        # ground_truth = np.stack(ground_truth, axis=0)
+        ground_truth = ground_truth[np.newaxis,:,:]
         ground_truth = np.where(ground_truth > 0, 1, 0)
 
         do_resize = \
