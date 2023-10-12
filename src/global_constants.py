@@ -71,8 +71,8 @@ LOSS_FUNC_SEGMENTATION                  = ['cross_entropy',
 N_DISPLAY                               = 4
 N_SUMMARY                               = 1000
 N_CHECKPOINT                            = 500
-CHECKPOINT_PATH                         = ''
-RESTORE_PATH                            = ''
+CHECKPOINT_PATH                         = 'checkpoint/'
+RESTORE_PATH                            = 'restore/'
 
 # Hardware settings
 DEVICE                                  = 'cuda'

@@ -128,6 +128,7 @@ def train(train_multimodal_scan_paths,
     val_ground_truths = []
     for path in ground_truth_paths:
         ground_truth = np.where(np.load(path) > 0, 1, 0)
+        np.save('gt.npy', ground_truth)
         val_ground_truths.append(ground_truth)
 
     positive_class_sampler = PositiveClassSampler(
@@ -514,7 +515,7 @@ def run(multimodal_scan_paths,
         # Checkpoint settings
         checkpoint_path=settings.CHECKPOINT_PATH,
         restore_path=settings.RESTORE_PATH,
-        do_visualize_predictions=False,
+        do_visualize_predictions=True,
         # Hardware settings
         device=settings.DEVICE,
         n_thread=settings.N_THREAD):
@@ -539,6 +540,7 @@ def run(multimodal_scan_paths,
         for visual_path in visual_paths:
             if not os.path.exists(visual_path):
                 os.makedirs(visual_path)
+                print(visual_path)
     else:
         visual_paths = []
 

@@ -580,7 +580,7 @@ def validateMRI(model,
             chunk_prediction_time = time.time() - start_time
 
             # Save scan, segmentation, and ground truth chunk for tensorboard
-            if chunk_idx == 90 and summary_writer is not None and ground_truths is not None:
+            if chunk_idx == 0 and summary_writer is not None and ground_truths is not None:
                 if np.random.rand() < 0.10 or idx == n_samples - 1:
                     ground_truth_chunk = ground_truth[..., chunk_idx]
                     ground_truth_chunk = cv2.resize(
@@ -629,7 +629,7 @@ def validateMRI(model,
 
                 assert chunk.shape[0] == 1, ('Batch size should be 1', chunk.shape)
                 ground_truth_2d = ground_truth[:, :, chunk_idx]
-
+                chunk = chunk.detach().cpu().numpy()
                 save_prediction_img(
                     chunk=chunk,
                     idx=idx,
