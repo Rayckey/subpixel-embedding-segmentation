@@ -548,15 +548,15 @@ class SPiNModel(object):
 
         # Restore encoder and decoder weights
         if self.use_subpixel_guidance:
-            self.encoder_subpixel_embedding.load_state_dict(checkpoint['encoder_subpixel_embedding_state_dict'])
-            self.decoder_subpixel_embedding.load_state_dict(checkpoint['decoder_subpixel_embedding_state_dict'])
-            self.subpixel_guidance.load_state_dict(checkpoint['subpixel_guidance_state_dict'])
+            self.encoder_subpixel_embedding.load_state_dict(checkpoint['encoder_subpixel_embedding_state_dict'], strict=False)
+            self.decoder_subpixel_embedding.load_state_dict(checkpoint['decoder_subpixel_embedding_state_dict'], strict=False)
+            self.subpixel_guidance.load_state_dict(checkpoint['subpixel_guidance_state_dict'], strict=False)
 
-        self.encoder_segmentation.load_state_dict(checkpoint['encoder_segmentation_state_dict'])
-        self.decoder_segmentation.load_state_dict(checkpoint['decoder_segmentation_state_dict'])
+        self.encoder_segmentation.load_state_dict(checkpoint['encoder_segmentation_state_dict'], strict=False)
+        self.decoder_segmentation.load_state_dict(checkpoint['decoder_segmentation_state_dict'], strict=False)
 
         if optimizer is not None:
-            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            optimizer.load_state_dict(checkpoint['optimizer_state_dict'], strict=False)
 
         # Return the current step and optimizer
         return checkpoint['train_step'], optimizer

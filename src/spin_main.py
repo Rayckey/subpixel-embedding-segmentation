@@ -378,7 +378,7 @@ def train(train_multimodal_scan_paths,
 
         for train_scan, train_ground_truth in train_dataloader:
             train_step = train_step + 1
-
+            print(train_step)
             # Move data to device
             train_scan = train_scan.to(device)
             train_ground_truth = train_ground_truth.to(device)
@@ -716,6 +716,7 @@ def run(multimodal_scan_paths,
                     best_results=best_results,
                     visual_paths=visual_paths)
             else:
+                print(visual_paths)
                 best_results = validate(
                     model=model,
                     dataloader=dataloader,
@@ -733,7 +734,7 @@ def run(multimodal_scan_paths,
             # Run without ground truth, will only save results
             assert len(visual_paths) > 0, \
                 'No ground truth nor checkpoint output path is provided, so no evaluation or storing will be done.'
-
+        
             validate(
                 model=model,
                 dataloader=dataloader,

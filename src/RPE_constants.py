@@ -19,17 +19,17 @@ DECODER_TYPE_AVAILABLE_SEGMENTATION     = ['subpixel_guidance',
 ENCODER_TYPE_SEGMENTATION               = 'resnet18'
 INPUT_CHANNELS_SEGMENTATION             = 1
 N_FILTERS_ENCODER_SEGMENTATION          = [32, 64, 128, 196, 196]
-DECODER_TYPE_SEGMENTATION               = 'generic'
-N_FILTERS_DECODER_SEGMENTATION          = [196, 128, 64, 32, 16]
+DECODER_TYPE_SEGMENTATION               = ['subpixel_guidance','learnable_downsampler']
+N_FILTERS_DECODER_SEGMENTATION          = [196, 128, 64, 32, 16, 16]
 
 # Subpixel Embedding network settings
 ENCODER_TYPE_AVAILABLE_SUBPIXEL_EMBEDDING = ['resnet5_super_resolution',
                                              'resnet7_super_resolution',
                                              'none']
 DECODER_TYPE_AVAILABLE_SUBPIXEL_EMBEDDING = ['subpixel', 'none']
-ENCODER_TYPE_SUBPIXEL_EMBEDDING           = 'resnet5_super_resolution'
+ENCODER_TYPE_SUBPIXEL_EMBEDDING           = 'resnet5_subpixel_embedding'
 N_FILTERS_ENCODER_SUBPIXEL_EMBEDDING      = [16, 16, 16]
-DECODER_TYPE_SUBPIXEL_EMBEDDING           = 'sub_pixel'
+DECODER_TYPE_SUBPIXEL_EMBEDDING           = 'subpixel'
 N_FILTER_DECODER_SUBPIXEL_EMBEDDING       = 16
 OUTPUT_CHANNELS_SUBPIXEL_EMBEDDING        = 8
 
@@ -51,7 +51,7 @@ ACTIVATION_FUNC_AVAILABLE               = ['relu', 'leaky_relu', 'elu']
 WEIGHT_INITIALIZER                      = 'kaiming_uniform'
 ACTIVATION_FUNC                         = 'leaky_relu'
 OUTPUT_FUNC                             = 'linear'
-USE_BATCH_NORM                          = False
+USE_BATCH_NORM                          = True
 
 # Training settings
 N_EPOCH                                 = 1600
@@ -82,17 +82,6 @@ GPU                                     = 'gpu'
 N_THREAD                                = 8
 
 # Dataset Constants
-ATLAS_MIN                               = -3.316535e-05
-ATLAS_MAX                               = 100.00001
-ATLAS_MEAN                              = 30.20063
-ATLAS_SD                                = 35.221165
+RPE_MEAN                              = 47.119747
+RPE_SD                                = 22.61012
 
-WARWICK_MIN                             = 0.0
-WARWICK_MAX                             = 255.0
-WARWICK_MEAN                            = 177.20422
-WARWICK_SD                              = 58.42384
-
-RITE_MIN                                = 0.0
-RITE_MAX                                = 255.0
-RITE_MEAN                               = 79.09129
-RITE_SD                                 = 70.204414

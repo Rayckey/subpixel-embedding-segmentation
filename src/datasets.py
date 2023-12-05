@@ -1,6 +1,7 @@
 import numpy as np
 import torch.utils.data
 import data_utils
+from PIL import Image 
 
 
 class SPiNMRITrainingDataset(torch.utils.data.Dataset):
@@ -150,6 +151,72 @@ class SPiNMRITrainingDataset(torch.utils.data.Dataset):
     def __len__(self):
         return self.n_sample
 
+
+class SPiNMRISingleDataset(torch.utils.data.Dataset):
+    '''
+    Dataset for Subpixel Network (SPiN) to fetch entire scan volumes (supports multimodal)
+
+    Args:
+        multimodal_scan_paths : list[list[str]]
+            list of list of paths to multiple imaging modalities
+        shape : tuple[int]
+            (n_height, n_width) tuple
+    '''
+    def __init__(self, scan_path, shape):
+
+        # Make sure that input is list of list of strings
+        n_sample = 1
+
+        # Dataset paths and shape
+        self.scan_path = scan_path
+        self.n_sample = 1
+
+        self.n_height = shape[0]
+        self.n_width = shape[1]
+
+    def __getitem__(self, index):
+        '''
+        Fetches entire scan volume
+
+        Arg(s):
+            index : int
+                index of sample in dataset
+        Returns
+            numpy[float32] : C x D x H x W input scan
+        '''
+
+        # Each scan is H x W x C
+        scan_path = self.scan_path
+
+        image = Image.open(scan_path)
+        image = np.array(image)
+        scan = np.expand_dims(image, axis=0)
+        scan = np.expand_dims(scan, axis=-1).astype(np.float32)
+        
+        # Scan shape: D x H x W x C -> C x D x H x W
+        scan = np.transpose(scan, (3, 0, 1, 2))
+
+        scan_data_format = 'CHW' if len(scan.shape) == 3 else 'CDHW'
+
+        # Resize from C x D x H x W to C x D x h x w
+        do_resize = \
+            self.n_height is not None and \
+            self.n_width is not None and \
+            scan.shape[2] != self.n_height and \
+            scan.shape[3] != self.n_width
+
+        if do_resize:
+            scan = data_utils.resize(
+                scan,
+                shape=(self.n_height, self.n_width),
+                interp_type='nearest',
+                data_format=scan_data_format)
+
+        return scan.astype(np.float32)
+
+    def __len__(self):
+        return self.n_sample
+    
 
 class SPiNMRIInferenceDataset(torch.utils.data.Dataset):
     '''
