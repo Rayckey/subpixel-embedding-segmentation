@@ -447,7 +447,8 @@ def average_flip(model, output, image, flip_type):
     output /= nb_pred
 
     # convert the output into torch tensor:
-    output = torch.from_numpy(output).cuda()
+    #output = torch.from_numpy(output).cuda()
+    output = torch.from_numpy(output).to('cpu')
 
     return output
 

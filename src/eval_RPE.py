@@ -58,7 +58,7 @@ def run(single_input_path,
 
     if do_visualize_predictions:
         # Get input modality names for ....:
-        visual_path = single_input_path + ".out.png"
+        visual_path = single_input_path[:-4] + ".out.png"
 
 
     # Set up dataloader
@@ -238,7 +238,7 @@ parser.add_argument('--do_visualize_predictions',
     default=True, help='If true, visualize and store predictions as png.')
 # Hardware settings
 parser.add_argument('--device',
-    type=str, default=settings.DEVICE, help='Device to use: gpu, cpu')
+    type=str, default=settings.CPU, help='Device to use: gpu, cpu')
 parser.add_argument('--n_thread',
     type=int, default=settings.N_THREAD, help='Number of threads for fetching')
 
