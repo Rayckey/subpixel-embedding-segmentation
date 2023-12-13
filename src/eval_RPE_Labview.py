@@ -2,11 +2,13 @@ import argparse
 import RPE_constants as settings
 import torch, os
 from data_utils import *
+import data_utils
 import datasets
 from log_utils import log, save_RPE_prediction_img
 from transforms import Transforms
 from spin_model import SPiNModel
-from eval_utils import testRPE
+from eval_utils import testRPE_singleinput
+from PIL import Image 
 
 model = None
 
@@ -86,7 +88,8 @@ def initialize_global_model():
         model = create_model()
 
 
-def evaluate(single_input_path='D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\VSCAN_0012-071.png',
+def evaluate(input_array = None,
+            single_input_path='D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\VSCAN_0012-071.png',
             do_visualize_predictions=True,
             dataset_normalization='standard',
             dataset_means=[settings.RPE_MEAN],
@@ -98,19 +101,20 @@ def evaluate(single_input_path='D:\Yasamin\Ascan-Project-Git-Test\ImageProcessin
     if do_visualize_predictions:
             # Get input modality names for ....:
         visual_path = single_input_path[:-4] + ".out.png"
-
-
-    # Set up dataloader
-    # Training dataloader
-    dataloader = torch.utils.data.DataLoader(
-        datasets.SPiNMRISingleDataset(
-            scan_path=single_input_path,
-            shape=(None, None)),
-        batch_size=1,
-        shuffle=False,
-        num_workers=1,
-        drop_last=False)
     
+    #image = Image.open(single_input_path)
+    #scan = np.array(image)
+    if input_array is None:
+        image = np.loadtxt('D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\VSCAN_0012-071.txt') #Image.open(single_input_path)
+    else:
+        image = input_array
+    image = np.array(image)
+    scan = np.expand_dims(image, axis=0)
+    scan = np.expand_dims(scan, axis=-1).astype(np.float32)
+    
+    # Scan shape: D x H x W x C -> C x D x H x W
+    scan = np.transpose(scan, (3, 0, 1, 2))        
+
     validate = None
     save_prediction_img = save_RPE_prediction_img
 
@@ -125,11 +129,11 @@ def evaluate(single_input_path='D:\Yasamin\Ascan-Project-Git-Test\ImageProcessin
 
         # Run without ground truth, will only save results
 
-        validate = testRPE
+        validate = testRPE_singleinput
 
         validate(
             model=model,
-            dataloader=dataloader,
+            scan=scan,
             transforms=transforms,
             log_path='',
             save_prediction_img=save_prediction_img,
@@ -139,6 +143,8 @@ def evaluate(single_input_path='D:\Yasamin\Ascan-Project-Git-Test\ImageProcessin
             visual_path= visual_path)
 
     return best_results
+
+# TODO : remove (or disable) saving to file, add that option in labview instead.
 
 if __name__ == '__main__':
     initialize_global_model()

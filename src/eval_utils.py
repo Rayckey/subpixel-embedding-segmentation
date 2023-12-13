@@ -452,6 +452,97 @@ def average_flip(model, output, image, flip_type):
 
     return output
 
+
+def testRPE_singleinput(model,
+             scan,
+             transforms,
+             step,
+             log_path,
+             save_prediction_img,
+             ground_truths=None,
+             n_chunk=1,
+             n_classes=2,
+             dataset_means=[0, 0, 0, 0, 0],
+             visual_path=''):
+
+    while scan.ndim < 5:
+        scan = np.expand_dims(scan, axis=0)
+    scan = torch.from_numpy(scan).float()
+    idx = 0
+    # Iterate through each scan
+    channel, height, width = scan.shape[1], scan.shape[-2], scan.shape[-1]
+    patient_prediction = np.zeros((height, width, channel))
+
+    patient_prediction_time = 0
+
+    # Scan shape: 1 x C x D x H x W
+    chunk_idx = 0
+    chunk = get_n_chunk(
+                scan,
+                chunk_idx,
+                n_chunk,
+                constants=dataset_means,
+                is_torch=True,
+                input_type='BCDHW')
+    
+    # Move chunk to CUDA to same device as model
+    # chunk = chunk.to(model.device)
+
+    [chunk] = transforms.transform(
+        images_arr=[chunk],
+        random_transform_probability=0.0)
+
+    # Forward through super resolution and segmentation model
+    output_logits = model.forward(chunk)
+
+    # average predictions for horizontally/vertically flipped images:
+    output_logits = average_flip(model, output_logits[-1], chunk, "")
+
+    # Take probability maps and turn into 1 segmentation map, convert to ints
+    output_sigmoid = torch.sigmoid(output_logits)
+    output_segmentation = torch.where(
+        output_sigmoid < 0.5,
+        torch.zeros_like(output_sigmoid),
+        torch.ones_like(output_sigmoid)).long()
+
+    # Move the prediction to CPU to convert to numpy
+    output_segmentation = output_segmentation.cpu().numpy()
+
+    output_segmentation = np.squeeze(output_segmentation)
+
+    # Resize prediction to ground truth annotation size
+    output_segmentation = cv2.resize(
+        output_segmentation,
+        (width, height),
+        interpolation=cv2.INTER_NEAREST)
+
+    assert patient_prediction[:, :, chunk_idx].shape == output_segmentation.shape
+
+    # Append the segment_prediction to the patient's entire prediction
+    patient_prediction[:, :, chunk_idx] = output_segmentation
+
+    if len(visual_path) > 0:
+        output_sigmoid = output_sigmoid[0, 0].cpu().data.numpy()
+
+        # Resize soft prediction to ground truth annotation size
+        output_sigmoid = cv2.resize(
+            output_sigmoid,
+            (width, height),
+            interpolation=cv2.INTER_NEAREST)
+
+        assert chunk.shape[0] == 1, ('Batch size should be 1', chunk.shape)
+
+        save_prediction_img(
+            chunk=chunk,
+            idx=idx,
+            chunk_idx=chunk_idx,
+            output_segmentation=output_segmentation,
+            output_segmentation_soft=output_sigmoid,
+            visual_path=visual_path)
+    return output_segmentation
+
+
+
 def testRPE(model,
              dataloader,
              transforms,
