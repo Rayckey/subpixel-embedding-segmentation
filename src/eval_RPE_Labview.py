@@ -105,10 +105,11 @@ def evaluate(input_array = None,
     #image = Image.open(single_input_path)
     #scan = np.array(image)
     if input_array is None:
-        image = Image.open(single_input_path)
+        image = np.loadtxt('D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\\41060326.txt') # Image.open(single_input_path)
     else:
         image = input_array
     image = np.array(image, dtype = np.float32)
+    image = (np.clip(image, 20,80) - 20) / 60 * 255
     scan = np.expand_dims(image, axis=0)
     scan = np.expand_dims(scan, axis=-1).astype(np.float32)
     
@@ -131,7 +132,7 @@ def evaluate(input_array = None,
 
         validate = testRPE_singleinput
 
-        validate(
+        best_results, results_indices = validate(
             model=model,
             scan=scan,
             transforms=transforms,
@@ -142,7 +143,7 @@ def evaluate(input_array = None,
             n_chunk=n_chunk,
             visual_path= visual_path)
 
-    return best_results
+    return np.column_stack(results_indices).astype(np.float32)
 
 # TODO : remove (or disable) saving to file, add that option in labview instead.
 

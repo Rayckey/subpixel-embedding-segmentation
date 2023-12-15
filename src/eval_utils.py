@@ -532,6 +532,8 @@ def testRPE_singleinput(model,
 
         assert chunk.shape[0] == 1, ('Batch size should be 1', chunk.shape)
 
+        output_indices = np.nonzero(output_segmentation)
+
         save_prediction_img(
             chunk=chunk,
             idx=idx,
@@ -539,7 +541,7 @@ def testRPE_singleinput(model,
             output_segmentation=output_segmentation,
             output_segmentation_soft=output_sigmoid,
             visual_path=visual_path)
-    return output_segmentation
+    return output_segmentation, output_indices
 
 
 
