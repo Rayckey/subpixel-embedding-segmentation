@@ -515,7 +515,8 @@ def testRPE_singleinput(model,
         output_segmentation,
         (width, height),
         interpolation=cv2.INTER_NEAREST)
-
+    output_indices = np.nonzero(output_segmentation)
+    
     assert patient_prediction[:, :, chunk_idx].shape == output_segmentation.shape
 
     # Append the segment_prediction to the patient's entire prediction
@@ -532,7 +533,6 @@ def testRPE_singleinput(model,
 
         assert chunk.shape[0] == 1, ('Batch size should be 1', chunk.shape)
 
-        output_indices = np.nonzero(output_segmentation)
 
         save_prediction_img(
             chunk=chunk,
