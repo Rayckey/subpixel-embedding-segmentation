@@ -105,10 +105,10 @@ def evaluate(input_array = None,
     #image = Image.open(single_input_path)
     #scan = np.array(image)
     if input_array is None:
-        image = np.loadtxt('D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\VSCAN_0012-071.txt') #Image.open(single_input_path)
+        image = Image.open(single_input_path)
     else:
         image = input_array
-    image = np.array(image)
+    image = np.array(image, dtype = np.float32)
     scan = np.expand_dims(image, axis=0)
     scan = np.expand_dims(scan, axis=-1).astype(np.float32)
     
