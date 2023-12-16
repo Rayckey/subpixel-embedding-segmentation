@@ -90,7 +90,7 @@ def initialize_global_model():
 
 def evaluate(input_array = None,
             single_input_path='D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\VSCAN_0012-071.png',
-            do_visualize_predictions=True,
+            do_visualize_predictions=False,
             dataset_normalization='standard',
             dataset_means=[settings.RPE_MEAN],
             dataset_stddevs=[settings.RPE_SD],
@@ -101,11 +101,13 @@ def evaluate(input_array = None,
     if do_visualize_predictions:
             # Get input modality names for ....:
         visual_path = single_input_path[:-4] + ".out.png"
-    
+    else:
+        visual_path = ''
+
     #image = Image.open(single_input_path)
     #scan = np.array(image)
     if input_array is None:
-        image = np.loadtxt('D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\\41060326.txt') # Image.open(single_input_path)
+        image = Image.open(single_input_path) # np.loadtxt('D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\\41060326.txt') # 
     else:
         image = input_array
     image = np.array(image, dtype = np.float32)
