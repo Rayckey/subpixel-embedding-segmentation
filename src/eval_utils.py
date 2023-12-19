@@ -477,6 +477,7 @@ def testRPE_singleinput(model,
 
     # Scan shape: 1 x C x D x H x W
     chunk_idx = 0
+    t1 = time.time()*1000
     chunk = get_n_chunk(
                 scan,
                 chunk_idx,
@@ -484,7 +485,7 @@ def testRPE_singleinput(model,
                 constants=dataset_means,
                 is_torch=True,
                 input_type='BCDHW')
-    
+    t2 = time.time()*1000
     # Move chunk to CUDA to same device as model
     # chunk = chunk.to(model.device)
 
@@ -492,12 +493,13 @@ def testRPE_singleinput(model,
         images_arr=[chunk],
         random_transform_probability=0.0)
 
+    t3 = time.time()*1000
     # Forward through super resolution and segmentation model
     output_logits = model.forward(chunk)
-
+    t4 = time.time()*1000
     # average predictions for horizontally/vertically flipped images:
     output_logits = average_flip(model, output_logits[-1], chunk, "")
-
+    t5 = time.time()*1000
     # Take probability maps and turn into 1 segmentation map, convert to ints
     output_sigmoid = torch.sigmoid(output_logits)
     output_segmentation = torch.where(
@@ -509,7 +511,7 @@ def testRPE_singleinput(model,
     output_segmentation = output_segmentation.cpu().numpy()
 
     output_segmentation = np.squeeze(output_segmentation)
-
+    t6 = time.time()*1000
     # Resize prediction to ground truth annotation size
     output_segmentation = cv2.resize(
         output_segmentation,
@@ -541,6 +543,7 @@ def testRPE_singleinput(model,
             output_segmentation=output_segmentation,
             output_segmentation_soft=output_sigmoid,
             visual_path=visual_path)
+        t7 = time.time()*1000
     return output_segmentation, output_indices
 
 

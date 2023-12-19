@@ -9,6 +9,7 @@ from transforms import Transforms
 from spin_model import SPiNModel
 from eval_utils import testRPE_singleinput
 from PIL import Image 
+import time
 
 model = None
 
@@ -144,12 +145,24 @@ def evaluate(input_array = None,
             dataset_means=dataset_means,
             n_chunk=n_chunk,
             visual_path= visual_path)
-
     return np.column_stack(results_indices).astype(np.float32)
 
-# TODO : remove (or disable) saving to file, add that option in labview instead.
+
+
+def trials():
+    global model
+    # initialize_global_model()
+    image = np.loadtxt('D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\\VSCAN_0012-071.txt')
+    t1 = time.time()*1000
+    for i in range(1):
+        model = create_model()
+        evaluate(image, 'D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\testing\vscan_0012_071.png', False)
+
+    t2 = time.time()*1000
+    print(t2-t1)
+    return t2-t1
 
 if __name__ == '__main__':
-    initialize_global_model()
-    evaluate()
-
+    #initialize_global_model()
+    #evaluate()
+    trials()
