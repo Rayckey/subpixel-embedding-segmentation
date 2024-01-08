@@ -23,3 +23,5 @@ test/isles_visualizations
 test/debug.py
 test_models/
 bash/atlas/*/experiments
+yas/
+venv/
