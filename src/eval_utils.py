@@ -782,9 +782,9 @@ def validateMRI(model,
         mean_per_class_recall = perclass2mean(per_class_recalls)
         # Log metrics to tensorboard
         if summary_writer is not None:
-            summary_input_scans = torch.stack(summary_input_scans, dim=0)
-            summary_output_logits = torch.stack(summary_output_logits, dim=0)
-            summary_ground_truths = torch.stack(summary_ground_truths, dim=0)
+            summary_input_scans = torch.stack(summary_input_scans, dim=0).cpu().detach()
+            summary_output_logits = torch.stack(summary_output_logits, dim=0).cpu().detach()
+            summary_ground_truths = torch.stack(summary_ground_truths, dim=0).cpu().detach()
 
             model.log_summary(
                 input_scan=summary_input_scans,

@@ -10,8 +10,8 @@ python3 src/train_spin.py \
 --n_height 512 \
 --n_width 200 \
 --dataset_normalization standard \
---dataset_means 47.119747 \
---dataset_stddevs 22.61012 \
+--dataset_means 47.080208 \
+--dataset_stddevs 22.534702 \
 --encoder_type_subpixel_embedding resnet5_subpixel_embedding \
 --n_filters_encoder_subpixel_embedding 16 16 16 \
 --decoder_type_subpixel_embedding subpixel \
@@ -30,7 +30,7 @@ python3 src/train_spin.py \
 --weight_initializer kaiming_uniform \
 --activation_func leaky_relu \
 --use_batch_norm \
---learning_rates 3e-4 1e-4 5e-5 \
+--learning_rates 1e-3 1e-4 1e-5 \
 --learning_schedule 200 700 800 \
 --positive_class_sample_rates 0.95 \
 --positive_class_sample_schedule -1 \
@@ -45,10 +45,10 @@ python3 src/train_spin.py \
 --w_weight_decay_subpixel_embedding 0.0 \
 --loss_func_segmentation cross_entropy weight_decay \
 --w_weight_decay_segmentation 0.0 \
---w_positive_class 4.0 \
+--w_positive_class 5.0 \
 --n_summary 500 \
 --n_checkpoint 500 \
 --checkpoint_path \
-trained_spin_models/RPE/spin_traintest_512x200_wpos5 \
+trained_spin_models/RPE/spin_traintest_1024x400_wpos1 \
 --device gpu \
 --n_thread 8

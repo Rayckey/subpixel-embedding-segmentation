@@ -1,5 +1,6 @@
 import torch
 import torchvision.transforms.functional as functional
+from torchvision.transforms.functional import InterpolationMode
 from PIL import Image
 import numpy as np
 
@@ -576,7 +577,7 @@ class Transforms(object):
                     images[b, ...] = functional.rotate(
                         image,
                         angle=angles[b],
-                        resample=Image.NEAREST,
+                        interpolation=InterpolationMode.NEAREST,
                         expand=False)
 
             images_arr[i] = images

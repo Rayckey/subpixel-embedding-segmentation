@@ -54,8 +54,8 @@ OUTPUT_FUNC                             = 'linear'
 USE_BATCH_NORM                          = True
 
 # Training settings
-N_EPOCH                                 = 1600
-LEARNING_RATES                          = [3.00e-4, 1.00e-4, 5.00e-5]
+N_EPOCH                                 = 800
+LEARNING_RATES                          = [1.00e-3, 1.00e-4, 1.00e-5]
 LEARNING_SCHEDULE                       = [400, 1400, 1600]
 W_CROSS_ENTROPY                         = 1.00
 W_WEIGHT_DECAY                          = 1e-4

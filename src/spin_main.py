@@ -378,7 +378,7 @@ def train(train_multimodal_scan_paths,
 
         for train_scan, train_ground_truth in train_dataloader:
             train_step = train_step + 1
-            print(train_step)
+            # print(train_step)
             # Move data to device
             train_scan = train_scan.to(device)
             train_ground_truth = train_ground_truth.to(device)
