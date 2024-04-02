@@ -451,5 +451,5 @@ def get_scan_type(scan_path):
         return 'MRI'
     elif 'warwick' in scan_path or 'rite' in scan_path:
         return 'RGB'
-    elif 'retinal' in scan_path or "RPE" in scan_path:
+    elif 'retinal' in scan_path or "RPE" in scan_path or "multi" in scan_path:
         return 'MRI'

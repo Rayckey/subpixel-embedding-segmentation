@@ -11,6 +11,7 @@ from transforms import Transforms
 from spin_model import SPiNModel
 from sampler import PositiveClassSampler
 
+import pdb 
 
 def train(train_multimodal_scan_paths,
           train_ground_truth_path,
@@ -435,7 +436,7 @@ def train(train_multimodal_scan_paths,
                         model=model,
                         dataloader=val_dataloader,
                         transforms=val_transforms,
-                        save_prediction_img=save_prediction_img,
+                        save_prediction_img=save_prediction_img, #TODO modify this to match class num
                         ground_truths=val_ground_truths,
                         step=train_step,
                         log_path=log_path,

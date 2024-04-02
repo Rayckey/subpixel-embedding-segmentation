@@ -247,7 +247,7 @@ class SPiNModel(object):
 
             self.decoder_segmentation = networks.SubpixelGuidanceDecoder(
                 input_channels=latent_channels_segmentation,
-                output_channels=1,
+                output_channels=3,
                 n_filters=n_filters_decoder_segmentation,
                 n_skips=skip_channels_segmentation,
                 weight_initializer=weight_initializer,
@@ -259,7 +259,7 @@ class SPiNModel(object):
         elif 'generic' in decoder_type_segmentation:
             self.decoder_segmentation = networks.GenericDecoder(
                 input_channels=latent_channels_segmentation,
-                output_channels=1,
+                output_channels=3,
                 n_filters=n_filters_decoder_segmentation,
                 n_skips=skip_channels_segmentation,
                 weight_initializer=weight_initializer,
@@ -410,7 +410,12 @@ class SPiNModel(object):
 
         # Cross Entropy (implemented with BCE)
         if 'cross_entropy' in loss_func_segmentation:
-            self.loss_segmentation = losses.binary_cross_entropy_loss_func(
+            # self.loss_segmentation = losses.binary_cross_entropy_loss_func(
+            #     src=self.output_logits,
+            #     tgt=self.ground_truth,
+            #     w=torch.tensor(w_positive_class, device=self.device))
+
+            self.loss_segmentation = losses.cross_entropy_loss_func( #TODO
                 src=self.output_logits,
                 tgt=self.ground_truth,
                 w=torch.tensor(w_positive_class, device=self.device))

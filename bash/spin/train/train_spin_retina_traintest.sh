@@ -10,8 +10,8 @@ python3 src/train_spin.py \
 --n_height 1024 \
 --n_width 400 \
 --dataset_normalization standard \
---dataset_means 47.080208 \
---dataset_stddevs 22.534702 \
+--dataset_means 47.034603 \
+--dataset_stddevs 22.447832 \
 --encoder_type_subpixel_embedding resnet5_subpixel_embedding \
 --n_filters_encoder_subpixel_embedding 16 16 16 \
 --decoder_type_subpixel_embedding subpixel \
@@ -45,10 +45,10 @@ python3 src/train_spin.py \
 --w_weight_decay_subpixel_embedding 0.0 \
 --loss_func_segmentation cross_entropy weight_decay \
 --w_weight_decay_segmentation 0.0 \
---w_positive_class 5.0 \
+--w_positive_class 4.0 \
 --n_summary 500 \
 --n_checkpoint 500 \
 --checkpoint_path \
-trained_spin_models/RPE/spin_traintest_1024x400_wpos1 \
+trained_spin_models/RPE/spin_traintest_1024x400_wpos4 \
 --device gpu \
 --n_thread 8
