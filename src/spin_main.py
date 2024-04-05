@@ -19,6 +19,7 @@ def train(train_multimodal_scan_paths,
           val_ground_truth_path,
           # Input settings
           n_chunk=settings.N_CHUNK,
+          n_classes=settings.N_CLASSES,
           n_height=settings.O_HEIGHT,
           n_width=settings.O_WIDTH,
           # Normalization settings
@@ -436,11 +437,12 @@ def train(train_multimodal_scan_paths,
                         model=model,
                         dataloader=val_dataloader,
                         transforms=val_transforms,
-                        save_prediction_img=save_prediction_img, #TODO modify this to match class num
+                        save_prediction_img=save_prediction_img, 
                         ground_truths=val_ground_truths,
                         step=train_step,
                         log_path=log_path,
                         n_chunk=n_chunk,
+                        n_classes = n_classes, #TODO Done, added it to global constants. modify this to match class num
                         dataset_means=dataset_means,
                         best_results=best_results,
                         summary_writer=val_summary)

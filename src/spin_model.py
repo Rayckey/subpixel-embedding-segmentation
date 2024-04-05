@@ -415,7 +415,7 @@ class SPiNModel(object):
             #     tgt=self.ground_truth,
             #     w=torch.tensor(w_positive_class, device=self.device))
 
-            self.loss_segmentation = losses.cross_entropy_loss_func( #TODO
+            self.loss_segmentation = losses.cross_entropy_loss_func( #TODO (is this just chaning the global const or bash then?)
                 src=self.output_logits,
                 tgt=self.ground_truth,
                 w=torch.tensor(w_positive_class, device=self.device))

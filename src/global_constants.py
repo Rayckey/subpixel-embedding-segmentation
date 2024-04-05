@@ -3,6 +3,7 @@ N_BATCH                                 = 8
 O_HEIGHT                                = 197
 O_WIDTH                                 = 233
 N_CHUNK                                 = 1
+N_CLASSES                               = 3
 N_HEIGHT                                = 192
 N_WIDTH                                 = 256
 N_CHANNEL                               = 189

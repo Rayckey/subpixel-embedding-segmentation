@@ -687,12 +687,14 @@ def validateMRI(model,
                     summary_ground_truths.append(ground_truth_chunk)
 
             # Take probability maps and turn into 1 segmentation map, convert to ints
-            output_sigmoid = torch.sigmoid(output_logits) # TODO SOFTMAX
-            # TODO change to argmax 
-            output_segmentation = torch.where( 
-                output_sigmoid < 0.5,
-                torch.zeros_like(output_sigmoid),
-                torch.ones_like(output_sigmoid)).long()
+            # output_sigmoid = torch.sigmoid(output_logits) # TODO Done SOFTMAX
+            output_sigmoid = torch.softmax(output_logits, dim = 1)
+            # TODO Done change to argmax 
+            # output_segmentation = torch.where( 
+            #     output_sigmoid < 0.5,
+            #     torch.zeros_like(output_sigmoid),
+            #     torch.ones_like(output_sigmoid)).long()
+            output_segmentation = torch.argmax(output_sigmoid, dim = 1).long()
 
             # Move the prediction to CPU to convert to numpy
             output_segmentation = output_segmentation.cpu().numpy()
@@ -746,7 +748,7 @@ def validateMRI(model,
 
         if ground_truths is not None:
             # Compute and store metrics for each patient
-            dice_scores[idx] = dice_score(patient_prediction, ground_truth) # TODO 
+            dice_scores[idx] = dice_score(patient_prediction, ground_truth) # TODO ??
             ious[idx] = IOU(patient_prediction, ground_truth)
             precisions[idx] = precision(patient_prediction, ground_truth)
             recalls[idx] = recall(patient_prediction, ground_truth)
@@ -777,7 +779,7 @@ def validateMRI(model,
         mean_recall = np.mean(recalls)
 
         # tuples of n_classes + 1 elements; means of lesion_class, non_lesion_class, all
-        mean_per_class_dice = perclass2mean(per_class_dices) # TODO check output, should be 4 output
+        mean_per_class_dice = perclass2mean(per_class_dices) # TODO (??) check output, should be 4 output
         mean_per_class_iou = perclass2mean(per_class_ious)
         mean_per_class_precision = perclass2mean(per_class_precisions)
         mean_per_class_recall = perclass2mean(per_class_recalls)
@@ -823,19 +825,21 @@ def validateMRI(model,
         log('{:>10}  {:>10}  {:>10}  {:>10}  {:>10}'.format(
             'Step', 'Dice', 'IOU', 'Precision', 'Recall'), log_path)
         
-        # TODO change to per class metrics
+        # TODO Done change to per class metrics
         log('{:>10}  {:10.3f}  {:10.3f}  {:10.3f}  {:10.3f}'.format(
-            step, mean_per_class_dice[-1], mean_per_class_iou[-1], mean_per_class_precision[-1], mean_recall), log_path)
+            step, mean_per_class_dice[-1], mean_per_class_iou[-1], mean_per_class_precision[-1], mean_per_class_recall[-1]), log_path)
 
         log('{:>10}'.format('Per class metrics:'), log_path)
         log('{:>10}  {:>10}  {:>10}  {:>10}  {:>10}'.format('Class', 'dice', 'iou', 'precision', 'recall'), log_path)
-        # TODO change non-lesion to class 0, 1 and 2 
+        # TODO Done change non-lesion to class 0, 1 and 2 
         log('{:>10}  {:10.3f}  {:10.3f}  {:10.3f}  {:10.3f}'.format(
-            'Non-Lesion', mean_per_class_dice[0], mean_per_class_iou[0], mean_per_class_precision[0], mean_per_class_recall[0]), log_path)
+            'Background', mean_per_class_dice[0], mean_per_class_iou[0], mean_per_class_precision[0], mean_per_class_recall[0]), log_path)
         log('{:>10}  {:10.3f}  {:10.3f}  {:10.3f}  {:10.3f}'.format(
-            'Lesion', mean_per_class_dice[1], mean_per_class_iou[1], mean_per_class_precision[1], mean_per_class_recall[1]), log_path)
+            'Class1', mean_per_class_dice[1], mean_per_class_iou[1], mean_per_class_precision[1], mean_per_class_recall[1]), log_path)
+        log('{:>10}  {:10.3f}  {:10.3f}  {:10.3f}  {:10.3f}'.format(
+            'Class2', mean_per_class_dice[2], mean_per_class_iou[2], mean_per_class_precision[2], mean_per_class_recall[2]), log_path)
         
-        # TODO overall mean
+        # TODO (??) overall mean
         log('{:>10}  {:10.3f}  {:10.3f}  {:10.3f}  {:10.3f}'.format(
             'Mean', mean_per_class_dice[2], mean_per_class_iou[2], mean_per_class_precision[2], mean_per_class_recall[2]), log_path)
 
@@ -1502,7 +1506,7 @@ def display_time(seconds, granularity=2):
     return ', '.join(result[:granularity])
 
 def update_best_results(best_results, step, means):
-    #TODO update to keep track of " mean_per_" metrics
+    #TODO Done update to keep track of " mean_per_" metrics
     # make sure to save the right "best value"
     '''
     Compares previous best results to current results and updates if necessary
@@ -1542,11 +1546,11 @@ def update_best_results(best_results, step, means):
     # Compare to best results
     if best_results is not None:
         n_improvements = 0
-        if np.round(mean_dice, 3) > np.round(best_results['dice'], 3):
+        if np.round(mean_per_class_dice, 3) > np.round(best_results['per_class_dice'], 3):
             n_improvements += 1
-        if np.round(mean_precision, 3) > np.round(best_results['precision'], 3):
+        if np.round(mean_per_class_precision, 3) > np.round(best_results['per_class_precision'], 3):
             n_improvements += 1
-        if np.round(mean_recall, 3) > np.round(best_results['recall'], 3):
+        if np.round(mean_per_class_recall, 3) > np.round(best_results['per_class_recall'], 3):
             n_improvements += 1
 
         if n_improvements >= 2:

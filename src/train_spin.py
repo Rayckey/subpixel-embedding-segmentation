@@ -109,7 +109,7 @@ parser.add_argument('--loss_func_segmentation',
 parser.add_argument('--w_weight_decay_segmentation',
     type=float, default=settings.W_WEIGHT_DECAY, help='Weight of weight decay regularizer')
 parser.add_argument('--w_positive_class',
-    nargs='+', type=float, default=[settings.W_POSITIVE_CLASS], help='Weight of positive class penalty') #TODO  make to list later
+    nargs='+', type=float, default=[settings.W_POSITIVE_CLASS], help='Weight of positive class penalty') #TODO  (Isn't it already a list?) make to list later
 # Checkpoint settings
 parser.add_argument('--n_summary',
     type=int, default=settings.N_SUMMARY, help='Number of iterations for logging summary')
