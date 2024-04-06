@@ -338,7 +338,6 @@ def train(train_multimodal_scan_paths,
     learning_schedule_pos = 0
     augmentation_schedule_pos = 0
     n_epoch = learning_schedule[-1]
-
     # Start training
     model.train()
 

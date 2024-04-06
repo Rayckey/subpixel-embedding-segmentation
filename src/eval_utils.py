@@ -100,13 +100,13 @@ def perclass2mean(per_class_stat):
         per_class_stat : numpy
             2D array (N x 2) where columns represent statistic for non-lesion and lesion classes
     Returns:
-        tuple[float] : mean values by column (non_lesion_mean, lesion_mean, overall_mean)
+        tuple[float] : mean values by column (non_lesion_mean, lesion_mean,... more lesion_mean, overall_mean)
     '''
-    non_lesion_mean = np.nanmean(per_class_stat[:, 0])
-    lesion_mean = np.nanmean(per_class_stat[:, 1])
-    overall_mean = np.nanmean(per_class_stat)
+    # non_lesion_mean = np.nanmean(per_class_stat[:, 0])
+    # lesion_mean = np.nanmean(per_class_stat[:, 1])
+    # overall_mean = np.nanmean(per_class_stat)
 
-    return non_lesion_mean, lesion_mean, overall_mean
+    return [np.nanmean(per_class_stat[:,idx]) for idx in range(per_class_stat.shape[1])] + [np.nanmean(per_class_stat)]
 
 def compute_prediction_hist(label, pred, num_classes):
     '''
@@ -747,20 +747,20 @@ def validateMRI(model,
             save_numpy_to_nii(patient_prediction, output_paths[idx])
 
         if ground_truths is not None:
-            # Compute and store metrics for each patient
-            dice_scores[idx] = dice_score(patient_prediction, ground_truth) # TODO ??
-            ious[idx] = IOU(patient_prediction, ground_truth)
-            precisions[idx] = precision(patient_prediction, ground_truth)
-            recalls[idx] = recall(patient_prediction, ground_truth)
+            # # Compute and store metrics for each patient
+            # dice_scores[idx] = dice_score(patient_prediction, ground_truth) # TODO ??
+            # ious[idx] = IOU(patient_prediction, ground_truth)
+            # precisions[idx] = precision(patient_prediction, ground_truth)
+            # recalls[idx] = recall(patient_prediction, ground_truth)
 
-            if len(visual_paths) > 0:
+            # if len(visual_paths) > 0:
 
-                log('{:>9}  {:>9}  {:>9}  {:>9}  {:>9}'.format(
-                    'Patient', 'Dice', 'IOU', 'Precision', 'Recall'),
-                    log_path)
-                log('{:>9}  {:9.3f}  {:9.3f}  {:9.3f}  {:9.3f}'.format(
-                    idx, dice_scores[idx], ious[idx], precisions[idx], recalls[idx]),
-                    log_path)
+            #     log('{:>9}  {:>9}  {:>9}  {:>9}  {:>9}'.format(
+            #         'Patient', 'Dice', 'IOU', 'Precision', 'Recall'),
+            #         log_path)
+            #     log('{:>9}  {:9.3f}  {:9.3f}  {:9.3f}  {:9.3f}'.format(
+            #         idx, dice_scores[idx], ious[idx], precisions[idx], recalls[idx]),
+            #         log_path)
 
             class_histogram = compute_prediction_hist(ground_truth.flatten(), patient_prediction.flatten(), n_classes)
             per_class_dices[idx] = per_class_dice(class_histogram)
@@ -841,7 +841,7 @@ def validateMRI(model,
         
         # TODO (??) overall mean
         log('{:>10}  {:10.3f}  {:10.3f}  {:10.3f}  {:10.3f}'.format(
-            'Mean', mean_per_class_dice[2], mean_per_class_iou[2], mean_per_class_precision[2], mean_per_class_recall[2]), log_path)
+            'Mean', mean_per_class_dice[-1], mean_per_class_iou[-1], mean_per_class_precision[-1], mean_per_class_recall[-1]), log_path)
 
         # Log best results
         log_best_results(log_path, best_results)

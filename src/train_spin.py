@@ -109,7 +109,7 @@ parser.add_argument('--loss_func_segmentation',
 parser.add_argument('--w_weight_decay_segmentation',
     type=float, default=settings.W_WEIGHT_DECAY, help='Weight of weight decay regularizer')
 parser.add_argument('--w_positive_class',
-    nargs='+', type=float, default=[settings.W_POSITIVE_CLASS], help='Weight of positive class penalty') #TODO  (Isn't it already a list?) make to list later
+    nargs='+', type=list, default=[settings.W_POSITIVE_CLASS], help='Weight of positive class penalty') #TODO  (Isn't it already a list?) make to list later
 # Checkpoint settings
 parser.add_argument('--n_summary',
     type=int, default=settings.N_SUMMARY, help='Number of iterations for logging summary')
@@ -124,6 +124,61 @@ parser.add_argument('--device',
     type=str, default=settings.DEVICE, help='Device to use: gpu, cpu')
 parser.add_argument('--n_thread',
     type=int, default=settings.N_THREAD, help='Number of threads for fetching')
+
+
+parser.set_defaults(
+    # buffer=["2024-04-01_14-37-15", "2024-04-01_14-37-15"],
+    train_multimodal_scan_paths = "training/multi-vscans-train-images.txt",
+    train_ground_truth_path = "training/multi-vscans-train-masks.txt" ,
+    val_multimodal_scan_paths = "validation/multi-vscans-val-images.txt",
+    val_ground_truth_path = "validation/multi-vscans-val-masks.txt" ,
+    n_batch= 4 ,
+    n_chunk =1 ,
+    n_height= 1024 ,
+    n_width =400 ,
+    dataset_normalization = "standard" ,
+    dataset_means =47.034603 ,
+    dataset_stddevs =22.447832 ,
+    encoder_type_subpixel_embedding= "resnet5_subpixel_embedding" ,
+    n_filters_encoder_subpixel_embedding= [16, 16, 16 ],
+    decoder_type_subpixel_embedding= "subpixel" ,
+    n_filter_decoder_subpixel_embedding =16 ,
+    output_channels_subpixel_embedding= 8 ,
+    output_func_subpixel_embedding= "linear" ,
+    encoder_type_segmentation ="resnet18" ,
+    n_filters_encoder_segmentation= [32, 64, 128, 196, 196 ],
+    resolutions_subpixel_guidance=[ 0, 1 ],
+    n_filters_subpixel_guidance= [8, 8] ,
+    n_convolutions_subpixel_guidance =[1, 1] ,
+    decoder_type_segmentation =[ "subpixel_guidance" "learnable_downsampler" ],
+    n_filters_decoder_segmentation= [196, 128, 64, 32, 16, 16] ,
+    n_filters_learnable_downsampler= [16, 16] ,
+    kernel_sizes_learnable_downsampler=[ 3, 3] ,
+    weight_initializer = "kaiming_uniform" ,
+    activation_func = "leaky_relu" ,
+    use_batch_norm = True  ,
+    learning_rates = [5e-4, 1e-4, 1e-5] ,
+    learning_schedule = [200, 700, 800 ],
+    positive_class_sample_rates = 0.95 ,
+    positive_class_sample_schedule = -1 ,
+    positive_class_size_thresholds = 0 ,
+    augmentation_probabilities = [1.00, 0.50] ,
+    augmentation_schedule = [700, 800] ,
+    augmentation_flip_type = "horizontal" ,
+    augmentation_rotate = 45 ,
+    augmentation_noise_type = "gaussian" ,
+    augmentation_noise_spread = 1e-2 ,
+    augmentation_resize_and_pad = [1.0, 1.1] ,
+    w_weight_decay_subpixel_embedding = 0.0 ,
+    loss_func_segmentation = ["cross_entropy", "weight_decay"] ,
+    w_weight_decay_segmentation = 0.0 ,
+    w_positive_class = [4.0, 4.0],
+    n_summary = 500 ,
+    n_checkpoint = 500 ,
+    checkpoint_path=  "trained_spin_models/multi/spin_traintest_1024x400_wpos4",
+    device ="gpu" ,
+    n_thread = 8,
+)
 
 
 args = parser.parse_args()
