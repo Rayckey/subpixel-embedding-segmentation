@@ -2116,7 +2116,7 @@ class LearnableDownsampler(torch.nn.Module):
         x = x.view(n_batch, self.output_channels, -1, n_height, n_width)
 
         # Reshape to N x 1 x S^2 x (H / S) x (W / S)
-        weights = weights.view(n_batch, 1, -1, n_height, n_width)
+        weights = weights.view(n_batch, self.output_channels, -1, n_height, n_width)
 
         # Multiply and broadcast to yield N x C x S^2 x (H / S) x (W / S), then sum
         output = torch.sum(weights * x, dim=2)

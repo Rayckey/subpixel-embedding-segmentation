@@ -32,7 +32,7 @@ python3 src/train_spin.py \
 --use_batch_norm \
 --learning_rates 5e-4 1e-4 1e-5 \
 --learning_schedule 200 700 800 \
---positive_class_sample_rates 0.95 \
+--positive_class_sample_rates 0.95 0.95 \
 --positive_class_sample_schedule -1 \
 --positive_class_size_thresholds 0 \
 --augmentation_probabilities 1.00 0.50 \
@@ -45,7 +45,7 @@ python3 src/train_spin.py \
 --w_weight_decay_subpixel_embedding 0.0 \
 --loss_func_segmentation cross_entropy weight_decay \
 --w_weight_decay_segmentation 0.0 \
---w_positive_class 4.0 \
+--w_positive_class 4.0 4.0\
 --n_summary 500 \
 --n_checkpoint 500 \
 --checkpoint_path \

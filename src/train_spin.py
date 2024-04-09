@@ -8,13 +8,13 @@ parser = argparse.ArgumentParser()
 
 # Training and validation input filepaths
 parser.add_argument('--train_multimodal_scan_paths',
-    nargs='+', type=str, required=True, help='Paths to list of training MRI scan paths')
+    nargs='+', type=str,  help='Paths to list of training MRI scan paths')
 parser.add_argument('--train_ground_truth_path',
-    type=str, required=True, help='Path to list of ground truth annotation paths')
+    type=str,  help='Path to list of ground truth annotation paths')
 parser.add_argument('--val_multimodal_scan_paths',
-    nargs='+', type=str, required=True, help='Paths to list of validation MRI scan paths')
+    nargs='+', type=str,  help='Paths to list of validation MRI scan paths')
 parser.add_argument('--val_ground_truth_path',
-    type=str, required=True, help='Path to list of validation ground truth annotation paths')
+    type=str,  help='Path to list of validation ground truth annotation paths')
 # Batch settings
 parser.add_argument('--n_batch',
     type=int, default=settings.N_BATCH, help='Number of samples per batch')
@@ -128,9 +128,9 @@ parser.add_argument('--n_thread',
 
 parser.set_defaults(
     # buffer=["2024-04-01_14-37-15", "2024-04-01_14-37-15"],
-    train_multimodal_scan_paths = "training/multi-vscans-train-images.txt",
+    train_multimodal_scan_paths = ["training/multi-vscans-train-images.txt"],
     train_ground_truth_path = "training/multi-vscans-train-masks.txt" ,
-    val_multimodal_scan_paths = "validation/multi-vscans-val-images.txt",
+    val_multimodal_scan_paths = ["validation/multi-vscans-val-images.txt"],
     val_ground_truth_path = "validation/multi-vscans-val-masks.txt" ,
     n_batch= 4 ,
     n_chunk =1 ,
@@ -150,7 +150,7 @@ parser.set_defaults(
     resolutions_subpixel_guidance=[ 0, 1 ],
     n_filters_subpixel_guidance= [8, 8] ,
     n_convolutions_subpixel_guidance =[1, 1] ,
-    decoder_type_segmentation =[ "subpixel_guidance" "learnable_downsampler" ],
+    decoder_type_segmentation =[ "subpixel_guidance", "learnable_downsampler" ],
     n_filters_decoder_segmentation= [196, 128, 64, 32, 16, 16] ,
     n_filters_learnable_downsampler= [16, 16] ,
     kernel_sizes_learnable_downsampler=[ 3, 3] ,
@@ -159,9 +159,9 @@ parser.set_defaults(
     use_batch_norm = True  ,
     learning_rates = [5e-4, 1e-4, 1e-5] ,
     learning_schedule = [200, 700, 800 ],
-    positive_class_sample_rates = 0.95 ,
-    positive_class_sample_schedule = -1 ,
-    positive_class_size_thresholds = 0 ,
+    positive_class_sample_rates = [0.95, 0.95] ,
+    positive_class_sample_schedule = [-1, -1] ,
+    positive_class_size_thresholds = [0, 0] ,
     augmentation_probabilities = [1.00, 0.50] ,
     augmentation_schedule = [700, 800] ,
     augmentation_flip_type = "horizontal" ,
@@ -172,7 +172,7 @@ parser.set_defaults(
     w_weight_decay_subpixel_embedding = 0.0 ,
     loss_func_segmentation = ["cross_entropy", "weight_decay"] ,
     w_weight_decay_segmentation = 0.0 ,
-    w_positive_class = [4.0, 4.0],
+    w_positive_class = [1.0, 4.0, 4.0],
     n_summary = 500 ,
     n_checkpoint = 500 ,
     checkpoint_path=  "trained_spin_models/multi/spin_traintest_1024x400_wpos4",

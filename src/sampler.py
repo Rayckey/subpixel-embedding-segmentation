@@ -66,7 +66,7 @@ class PositiveClassSampler():
         # Case where we have positive sampling rate
         if split:
             # Separate indices of scans with lesions and not
-            flags = np.sum(T, axis=(0, 1))
+            flags = np.sum(T>0, axis=(0, 1))
 
             if out_of_range_buffer > 0:
                 flags = flags[out_of_range_buffer:-out_of_range_buffer]
