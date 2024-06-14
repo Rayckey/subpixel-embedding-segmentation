@@ -354,7 +354,7 @@ def log_best_results(log_path, best_results):
     assert(entry in best_results for entry in entries)
     for entry in per_class_entries:
         assert entry in best_results
-        assert len(best_results[entry]) == 3
+        # assert len(best_results[entry]) == 3
 
     log('\nBest step:', log_path)
     log('{:>10}  {:>10}  {:>10}  {:>10}  {:>10}'.format(
@@ -617,11 +617,11 @@ def validateMRI(model,
     if len(output_paths) > 0:
         assert len(output_paths) == n_samples, (len(output_paths), n_samples)
 
-    # Create an 1D array for each metric that holds the value for each metric
-    dice_scores = np.zeros(n_samples)
-    ious = np.zeros(n_samples)
-    precisions = np.zeros(n_samples)
-    recalls = np.zeros(n_samples)
+    # # Create an 1D array for each metric that holds the value for each metric
+    # dice_scores = np.zeros(n_samples)
+    # ious = np.zeros(n_samples)
+    # precisions = np.zeros(n_samples)
+    # recalls = np.zeros(n_samples)
 
     # Store per-class metrics (lesion, non-lesion, mean)
     per_class_dices = np.zeros((n_samples, n_classes))
@@ -687,7 +687,7 @@ def validateMRI(model,
                     summary_ground_truths.append(ground_truth_chunk)
 
             # Take probability maps and turn into 1 segmentation map, convert to ints
-            # output_sigmoid = torch.sigmoid(output_logits) # TODO Done SOFTMAX
+            # output_sigmoid = torch.sigmoid(output_logits) 
             output_sigmoid = torch.softmax(output_logits, dim = 1)
             # TODO Done change to argmax 
             # output_segmentation = torch.where( 
@@ -771,12 +771,19 @@ def validateMRI(model,
     # Calculate average patient prediction time
     mean_patient_prediction_time = np.mean(prediction_times)
 
+
+    # convert all nan to score
+    per_class_dices = np.nan_to_num(np.array(per_class_dices), nan=1.0)
+    per_class_ious = np.nan_to_num(np.array(per_class_ious), nan=1.0)
+    per_class_precisions = np.nan_to_num(np.array(per_class_precisions), nan=1.0)
+    per_class_recalls = np.nan_to_num(np.array(per_class_recalls), nan=1.0)
+
     if ground_truths is not None:
         # calculate mean value of each metric across all scans
-        mean_dice = np.mean(dice_scores)
-        mean_iou = np.mean(ious)
-        mean_precision = np.mean(precisions)
-        mean_recall = np.mean(recalls)
+        mean_dice =      np.mean(np.array(per_class_dices))
+        mean_iou =       np.mean(np.array(per_class_ious))
+        mean_precision = np.mean(np.array(per_class_precisions))
+        mean_recall =    np.mean(np.array(per_class_recalls))
 
         # tuples of n_classes + 1 elements; means of lesion_class, non_lesion_class, all
         mean_per_class_dice = perclass2mean(per_class_dices) # TODO (??) check output, should be 4 output
@@ -789,7 +796,8 @@ def validateMRI(model,
             summary_output_logits = torch.stack(summary_output_logits, dim=0).cpu().detach()
             summary_ground_truths = torch.stack(summary_ground_truths, dim=0).cpu().detach()
 
-            model.log_summary(
+            # log_summary
+            model.log_summary_multi(
                 input_scan=summary_input_scans,
                 output_logits=summary_output_logits,
                 ground_truth=summary_ground_truths,
@@ -1398,7 +1406,8 @@ def small_lesion_validate(model,
             summary_output_logits = torch.stack(summary_output_logits, dim=0)
             summary_ground_truths = torch.stack(summary_ground_truths, dim=0)
 
-            model.log_summary(
+            #log_summary
+            model.log_summary_multi(
                 input_scan=summary_input_scans,
                 output_logits=summary_output_logits,
                 ground_truth=summary_ground_truths,

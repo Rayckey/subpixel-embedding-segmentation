@@ -415,7 +415,7 @@ class SPiNModel(object):
             #     tgt=self.ground_truth,
             #     w=torch.tensor(w_positive_class, device=self.device))
 
-            self.loss_segmentation = losses.cross_entropy_loss_func( #TODO (is this just chaning the global const or bash then?)
+            self.loss_segmentation = losses.cross_entropy_loss_func(
                 src=self.output_logits,
                 tgt=self.ground_truth,
                 w=torch.tensor(w_positive_class, device=self.device))
@@ -666,6 +666,123 @@ class SPiNModel(object):
             output_segmentation_summary = log_utils.colorize(255.0 * output_segmentation.cpu(), colormap='gray')
             ground_truth_summary = log_utils.colorize(255.0 * ground_truth.cpu(), colormap='gray')
             error_segmentation_summary = log_utils.colorize(255.0 * error_segmentation.cpu(), colormap='magma')
+
+            display_summary = torch.cat([
+                input_scan_summary,
+                output_segmentation_summary,
+                ground_truth_summary,
+                error_segmentation_summary], dim=-1)
+
+            summary_writer.add_image(
+                'input_output_groundtruth_error',
+                torchvision.utils.make_grid(display_summary, nrow=1),
+                global_step=step)
+
+            # Log scalars
+            for (metric_name, metric_value) in scalar_dictionary.items():
+                summary_writer.add_scalar(metric_name, metric_value, global_step=step)
+
+
+    def log_summary_multi(self,
+                    input_scan,
+                    output_logits,
+                    ground_truth,
+                    scalar_dictionary,
+                    summary_writer,
+                    step,
+                    n_display=1):
+        '''
+        Log the input scan, output logits, ground truth, error, and scalars to tensorboard
+
+        Arg(s):
+            input_scan : torch.Tensor[float32]
+                input N x C x 1 x H x W MRI scan
+            output_logits : torch.Tensor[float32]
+                output of segmentation network
+            ground_truth : torch.Tensor[float32]
+                ground truth annotation
+            scalar_dictionary : dict[str, float]
+                dictionary of scalar name and value to graph
+            summary_writer : SummaryWriter
+                Tensorboard summary writer
+            step : int
+                current step in training
+            n_display : int
+                number of samples from batch to display
+        Returns:
+            None
+        '''
+
+        with torch.no_grad():
+
+            # N x C x H x W case (ensure n_display is between batch size and 1)
+            if len(output_logits.shape) == 4:
+                n_display = min(output_logits.shape[0], max(n_display, 1))
+
+            if len(input_scan.shape) == 5:
+                _, n_chunk, _, o_height, o_width = input_scan.shape
+            else:
+                _, n_chunk, o_height, o_width = input_scan.shape
+
+            if n_chunk > 1:
+                # Shape: N x C x D x H x W
+                if len(input_scan.shape) == 5:
+                    input_scan = torch.unsqueeze(
+                        input_scan[0:n_display, n_chunk // 2, 0, :, :], dim=1)
+                # Shape: N x C x H x W or N x D x H x W or N x (C x D) x H x W
+                else:
+                    input_scan = torch.unsqueeze(
+                        input_scan[0:n_display, n_chunk // 2, :, :], dim=1)
+            else:
+                # Shape: N x 1 x D x H x W
+                if len(input_scan.shape) == 5:
+                    input_scan = input_scan[0:n_display, :, 0, :, :]
+                # Shape: N x 1 x H x W
+                else:
+                    input_scan = input_scan[0:n_display, ...]
+
+            '''
+            Logging segmentation outputs to summary
+            '''
+            n_p_classes = output_logits.shape[1]-1
+            # Make output_segmentation into binary segmentation
+            n_height, n_width = output_logits.shape[-2:]
+
+            output_logits = output_logits[0:n_display]
+            # output_sigmoid = torch.sigmoid(output_logits.to(torch.float32))
+            output_sigmoid = torch.softmax(output_logits.to(torch.float32), dim = 1)
+            # output_segmentation = torch.where(
+            #     output_sigmoid < 0.5,
+            #     torch.zeros_like(output_sigmoid),
+            #     torch.ones_like(output_sigmoid))
+            output_segmentation = torch.argmax(output_sigmoid, dim = 1).long()
+            output_segmentation = torch.unsqueeze(output_segmentation, dim=1)
+
+            # Reshape input scan to match output segmentation
+            if o_height != n_height or o_width != n_width:
+                input_scan = torch.nn.functional.interpolate(
+                    input=input_scan,
+                    size=(n_height, n_width))
+
+            ground_truth = torch.unsqueeze(ground_truth[0:n_display], dim=1)
+
+            # Resize ground truth if needed to match output segmentation
+            ground_truth_height, ground_truth_width = ground_truth.shape[-2:]
+            if ground_truth_height != n_height or ground_truth_width != n_width:
+                ground_truth = ground_truth.float()
+                ground_truth = torch.nn.functional.interpolate(
+                    input=ground_truth,
+                    size=(n_height, n_width),
+                    mode='nearest')
+                ground_truth = ground_truth.long()
+
+            error_segmentation = torch.abs(output_segmentation - ground_truth)
+
+            # Log images to summary
+            input_scan_summary = log_utils.colorize(input_scan.cpu(), colormap='viridis')
+            output_segmentation_summary = log_utils.colorize(255.0/n_p_classes * output_segmentation.cpu(), colormap='gray')
+            ground_truth_summary = log_utils.colorize(255.0/n_p_classes * ground_truth.cpu(), colormap='gray')
+            error_segmentation_summary = log_utils.colorize(255.0/n_p_classes  * error_segmentation.cpu(), colormap='magma')
 
             display_summary = torch.cat([
                 input_scan_summary,

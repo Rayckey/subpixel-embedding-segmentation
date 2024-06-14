@@ -91,7 +91,7 @@ class SPiNMRITrainingDataset(torch.utils.data.Dataset):
         ground_truth = np.load(self.ground_truth_paths[index]).astype(np.float32)
 
         # Account for noise and normalize
-        ground_truth = np.where(ground_truth > 0, 1, 0)
+        # ground_truth = np.where(ground_truth > 0, 1, 0)
 
         if self.n_chunk is not None:
             # Randomly select a chunk

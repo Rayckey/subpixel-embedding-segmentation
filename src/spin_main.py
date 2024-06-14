@@ -129,7 +129,8 @@ def train(train_multimodal_scan_paths,
     # Load ground truth scans
     val_ground_truths = []
     for path in ground_truth_paths:
-        ground_truth = np.where(np.load(path) > 0, 1, 0)
+        # ground_truth = np.where(np.load(path) > 0, 1, 0)
+        ground_truth = np.load(path)
         np.save('gt.npy', ground_truth)
         val_ground_truths.append(ground_truth)
 
@@ -405,7 +406,8 @@ def train(train_multimodal_scan_paths,
             optimizer.step()
 
             if (train_step % n_summary) == 0:
-                model.log_summary(
+                model.log_summary_multi(
+                # model.log_summary(
                     input_scan=model.input_scan,
                     output_logits=model.output_logits,
                     ground_truth=model.ground_truth,
@@ -550,19 +552,21 @@ def run(multimodal_scan_paths,
     for path in multimodal_scan_paths:
         log(path, log_path)
 
-    # Read paths for evaluation
-    multimodal_scan_paths = [
-        data_utils.read_paths(path) for path in multimodal_scan_paths
-    ]
+    # # Read paths for evaluation
+    # multimodal_scan_paths = [
+    #     data_utils.read_paths(path) for path in multimodal_scan_paths
+    # ]
 
     if ground_truth_path is not None:
         log('Ground truth path:', log_path)
-        log(ground_truth_path, log_path)
+        for path in ground_truth_path:
+            log(path, log_path)
 
-        ground_truth_paths = data_utils.read_paths(ground_truth_path)
+        # ground_truth_paths = data_utils.read_paths(ground_truth_path)
+        ground_truth_paths = ground_truth_path
 
-        for paths in multimodal_scan_paths:
-            assert len(paths) == len(ground_truth_paths)
+        # for paths in multimodal_scan_paths:
+        assert len(multimodal_scan_paths) == len(ground_truth_paths)
 
         # Load ground truth
         ground_truths = []
@@ -578,12 +582,12 @@ def run(multimodal_scan_paths,
 
     # Set up dataloader
      # Determine which data type to use
-    scan_type = get_scan_type(multimodal_scan_paths[0][0])
+    scan_type = get_scan_type(multimodal_scan_paths[0])
     # Training dataloader
     if scan_type == 'MRI':
         dataloader = torch.utils.data.DataLoader(
             datasets.SPiNMRIInferenceDataset(
-                multimodal_scan_paths=multimodal_scan_paths,
+                multimodal_scan_paths=[multimodal_scan_paths],
                 shape=(None, None)),
             batch_size=1,
             shuffle=False,
