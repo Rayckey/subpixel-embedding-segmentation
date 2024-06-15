@@ -713,13 +713,14 @@ def validateMRI(model,
             patient_prediction[:, :, chunk_idx] = output_segmentation
 
             if len(visual_paths) > 0:
-                output_sigmoid = output_sigmoid[0, 0].cpu().data.numpy()
+                # output_sigmoid = output_sigmoid[0, 0].cpu().data.numpy()
+                output_sigmoid = torch.squeeze(output_sigmoid).data.numpy()
 
-                # Resize soft prediction to ground truth annotation size
-                output_sigmoid = cv2.resize(
-                    output_sigmoid,
-                    (width, height),
-                    interpolation=cv2.INTER_NEAREST)
+                # # Resize soft prediction to ground truth annotation size
+                # output_sigmoid = cv2.resize(
+                #     output_sigmoid,
+                #     (width, height),
+                #     interpolation=cv2.INTER_NEAREST)
 
                 assert chunk.shape[0] == 1, ('Batch size should be 1', chunk.shape)
                 ground_truth_2d = ground_truth[:, :, chunk_idx]
