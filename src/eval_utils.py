@@ -541,7 +541,6 @@ def testRPE(model,
                     visual_path=visual_path)
     return 
 
-
 def validateMRI(model,
              dataloader,
              transforms,
@@ -856,6 +855,91 @@ def validateMRI(model,
         log_best_results(log_path, best_results)
 
     return best_results
+
+def testMulti(model,
+             scan,
+             transforms,
+             save_prediction_img,
+             test_time_flip_type='',
+             n_chunk=1,
+             dataset_means=[0, 0, 0, 0, 0],
+             output_paths=[],
+             visual_paths=[]):
+    
+    while scan.ndim < 5:
+        scan = np.expand_dims(scan, axis=0)
+    scan = torch.from_numpy(scan).float()
+    idx = 0
+    chunk_idx = 0
+
+    channel, height, width = scan.shape[1], scan.shape[-2], scan.shape[-1]
+    patient_prediction = np.zeros((height, width, channel))
+    chunk = get_n_chunk(
+                scan,
+                chunk_idx,
+                n_chunk,
+                constants=dataset_means,
+                is_torch=True,
+                input_type='BCDHW')
+    chunk = chunk.to(model.device)
+    [chunk] = transforms.transform(
+                images_arr=[chunk],
+                random_transform_probability=0.0)
+    start_time = time.time()
+
+    # Forward through super resolution and segmentation model
+    output_logits = model.forward(chunk)
+
+    # average predictions for horizontally/vertically flipped images:
+    output_logits = average_flip(model, output_logits[-1], chunk, test_time_flip_type)
+
+    chunk_prediction_time = time.time() - start_time
+    print(chunk_prediction_time*1000)
+    # Take probability maps and turn into 1 segmentation map, convert to ints
+    output_sigmoid = torch.softmax(output_logits, dim = 1)
+    output_segmentation = torch.argmax(output_sigmoid, dim = 1).long()
+    # Move the prediction to CPU to convert to numpy
+    output_segmentation = output_segmentation.cpu().numpy()
+
+    output_segmentation = np.squeeze(output_segmentation)
+
+    # Resize prediction to ground truth annotation size
+    output_segmentation = cv2.resize(
+        output_segmentation,
+        (width, height),
+        interpolation=cv2.INTER_NEAREST)
+    assert patient_prediction[:, :, chunk_idx].shape == output_segmentation.shape
+
+    # Append the segment_prediction to the patient's entire prediction
+    patient_prediction[:, :, chunk_idx] = output_segmentation
+
+    if len(visual_paths) > 0:
+        output_sigmoid = torch.squeeze(output_sigmoid).data.numpy()
+
+        # Data type should be unsigned short
+        patient_prediction = patient_prediction.astype(np.ushort)
+        assert chunk.shape[0] == 1, ('Batch size should be 1', chunk.shape)
+        chunk = chunk.detach().cpu().numpy()
+        # TODO need a different version of save_MRI_prediction_img that doesn't require ground truth
+        save_prediction_img(
+            chunk=chunk,
+            idx=idx,
+            chunk_idx=chunk_idx,
+            output_segmentation=output_segmentation,
+            output_segmentation_soft=output_sigmoid,
+            ground_truth_2d=None, 
+            visual_paths=visual_paths)
+        
+        # Accumulate amount of time for predicting this patient's scan
+        patient_prediction_time += chunk_prediction_time
+
+    if len(output_paths) > 0:
+        # Data type should be unsigned short
+        patient_prediction = patient_prediction.astype(np.ushort)
+
+        # save predictions in nii
+        save_numpy_to_nii(patient_prediction, output_paths[idx])
+    return output_segmentation 
 
 def validateRGB(model,
                 dataloader,

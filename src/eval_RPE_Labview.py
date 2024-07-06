@@ -2,11 +2,11 @@ import argparse
 import torch, os
 from data_utils import *
 import datasets
-from log_utils import log, save_MRI_prediction_img
+from log_utils import log, save_multi_MRI_prediction_img
 from transforms import Transforms
 from spin_model import SPiNModel
-from eval_utils import validateMRI
-from PIL import Image 
+from eval_utils import testMulti
+from PIL import Image, ImageOps
 import time
 
 import global_constants as settings
@@ -46,7 +46,7 @@ def create_model(
         use_batch_norm=True,
         augmentation_flip_type="horizontal",
         checkpoint_path="trained_spin_models/multi/spin_traintest_1024x400_wpos4",
-        restore_path="trained_spin_models/multi/spin_traintest_1024x400_wpos4/model-500.pth",
+        restore_path="D:\Yasamin\ImageProcessing\subpixel-embedding-segmentation/trained_models/model-33500.pth",
         do_visualize_predictions=True,
         device="gpu",
         n_thread=8
@@ -145,6 +145,7 @@ def evaluate(input_array = None,
 
     if input_array is None:
         image = Image.open(single_input_path) # np.loadtxt('D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\\41060326.txt') # 
+        image = ImageOps.grayscale(image)
     else:
         image = input_array
     image = np.array(image, dtype = np.float32)
@@ -156,7 +157,7 @@ def evaluate(input_array = None,
     scan = np.transpose(scan, (3, 0, 1, 2))        
 
     validate = None
-    save_prediction_img = save_MRI_prediction_img
+    save_prediction_img = save_multi_MRI_prediction_img
 
     transforms = Transforms(
         dataset_means=dataset_means,
@@ -169,33 +170,39 @@ def evaluate(input_array = None,
 
         # Run without ground truth, will only save results
 
-        validate = validateMRI
+        validate = testMulti
 
-        best_results, results_indices = validate(
+        results = validate(
             model=model,
             scan=scan,
             transforms=transforms,
-            log_path='',
             save_prediction_img=save_prediction_img,
-            step=0,
-            dataset_means=dataset_means,
             n_chunk=n_chunk,
-            visual_path= visual_path)
-    return np.column_stack(results_indices).astype(np.float32)
+            dataset_means=dataset_means,           
+            visual_paths= visual_path)
+    rpe = np.vstack(np.where(results == 1))
+    ilm = np.vstack(np.where(results == 2))
+    # np.column_stack(results_indices).astype(np.float32)
+    return rpe, ilm
 
 
 
 def trials():
     global model
     # initialize_global_model()
-    image = np.loadtxt('D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\\VSCAN_0012-071.txt')
+    # image = np.loadtxt('D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\\VSCAN_0012-071.txt')
+    image = Image.open('D:\Yasamin\Ascan-Project-Git-Test\\ImageProcessing\\testing\\im203.png') # np.loadtxt('D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\\41060326.txt') # 
+    image = ImageOps.grayscale(image)
     t1 = time.time()*1000
-    for i in range(1):
-        model = create_model()
-        evaluate(None, 'D:\Yasamin\Ascan-Project-Git-Test\\ImageProcessing\\testing\\im_203.png', True)
-
-    t2 = time.time()*1000
+    model = create_model()
+    for i in range(10):              
+        t2 = time.time()*1000
+        evaluate(image, 'D:\Yasamin\Ascan-Project-Git-Test\\ImageProcessing\\testing\\im203.png', False)
+        t3 = time.time()*1000
+        print(t3-t2)
+    # t2 = time.time()*1000
     print(t2-t1)
+    print(t3-t2)
     return t2-t1
 
 if __name__ == '__main__':
