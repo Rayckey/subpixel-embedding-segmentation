@@ -571,7 +571,7 @@ def run(multimodal_scan_paths,
         # Load ground truth
         ground_truths = []
         for path in ground_truth_paths:
-            ground_truth = np.where(np.load(path) > 0, 1, 0)
+            ground_truth = np.load(path)
             ground_truths.append(ground_truth)
 
     if small_lesion_idxs_path is not None:
