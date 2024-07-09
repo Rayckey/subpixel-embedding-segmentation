@@ -238,7 +238,7 @@ parser.set_defaults(
     use_batch_norm=True,
     augmentation_flip_type="horizontal",
     checkpoint_path="trained_spin_models/multi/spin_traintest_1024x400_wpos4",
-    restore_path="trained_spin_models/multi/spin_traintest_1024x400_wpos4/model-500.pth",
+    restore_path="trained_spin_models/multi/spin_traintest_1024x400_wpos4/model-33500.pth",
     do_visualize_predictions=True,
     device="gpu",
     n_thread=8,

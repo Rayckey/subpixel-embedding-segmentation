@@ -172,7 +172,7 @@ parser.set_defaults(
     w_weight_decay_subpixel_embedding = 0.0 ,
     loss_func_segmentation = ["cross_entropy", "weight_decay"] ,
     w_weight_decay_segmentation = 0.0 ,
-    w_positive_class = [1.0, 4.0, 4.0],
+    w_positive_class = [1.0, 3.0, 10.0],
     n_summary = 500 ,
     n_checkpoint = 500 ,
     checkpoint_path=  "trained_spin_models/multi/spin_traintest_1024x400_wpos4",

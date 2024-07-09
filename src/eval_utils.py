@@ -1640,11 +1640,11 @@ def update_best_results(best_results, step, means):
     # Compare to best results
     if best_results is not None:
         n_improvements = 0
-        if np.round(mean_per_class_dice, 3) > np.round(best_results['per_class_dice'], 3):
+        if np.round(np.mean(mean_per_class_dice), 3) > np.round(np.mean(best_results['per_class_dice']), 3):
             n_improvements += 1
-        if np.round(mean_per_class_precision, 3) > np.round(best_results['per_class_precision'], 3):
+        if np.round(np.mean(mean_per_class_precision), 3) > np.round(np.mean(best_results['per_class_precision']), 3):
             n_improvements += 1
-        if np.round(mean_per_class_recall, 3) > np.round(best_results['per_class_recall'], 3):
+        if np.round(np.mean(mean_per_class_recall), 3) > np.round(np.mean(best_results['per_class_recall']), 3):
             n_improvements += 1
 
         if n_improvements >= 2:

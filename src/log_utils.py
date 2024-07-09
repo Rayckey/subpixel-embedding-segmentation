@@ -7,7 +7,7 @@ from data_utils import min_max_normalization
 
 
 def log(s, filepath=None, to_console=True):
-    '''
+    """
     Logs a string to either file or console
 
     Arg(s):
@@ -17,7 +17,7 @@ def log(s, filepath=None, to_console=True):
             output filepath for logging
         to_console : bool
             log to console
-    '''
+    """
 
     if to_console:
         print(s)
@@ -26,13 +26,14 @@ def log(s, filepath=None, to_console=True):
         if not os.path.isdir(os.path.dirname(filepath)):
             os.makedirs(os.path.dirname(filepath))
             with open(filepath, "w+") as o:
-                o.write(s+'\n')
+                o.write(s + "\n")
         else:
             with open(filepath, "a+") as o:
-                o.write(s+'\n')
+                o.write(s + "\n")
 
-def discrete_colorize(T, colormap='magma'):
-    '''
+
+def discrete_colorize(T, colormap="magma"):
+    """
     Colorizes a 1-channel tensor with matplotlib colormaps
 
     Arg(s):
@@ -40,7 +41,7 @@ def discrete_colorize(T, colormap='magma'):
             1-channel tensor
         colormap : str
             matplotlib colormap
-    '''
+    """
 
     cm = plt.cm.get_cmap(colormap)
 
@@ -48,17 +49,17 @@ def discrete_colorize(T, colormap='magma'):
     T = np.squeeze(np.transpose(T.cpu().numpy(), (0, 3, 4, 2, 1)), axis=-1)
 
     # Colorize using colormap and transpose back
-    color = np.concatenate([
-        np.expand_dims(cm(T[n, ...])[..., 0:3], 0) for n in range(T.shape[0])],
-        axis=0)
+    color = np.concatenate(
+        [np.expand_dims(cm(T[n, ...])[..., 0:3], 0) for n in range(T.shape[0])], axis=0
+    )
     color = np.transpose(color, (0, 3, 1, 2))
 
     # Convert back to tensor
     return torch.from_numpy(color.astype(np.float32))
 
 
-def colorize(T, colormap='magma'):
-    '''
+def colorize(T, colormap="magma"):
+    """
     Colorizes a 1-channel tensor with matplotlib colormaps
 
     Arg(s):
@@ -66,7 +67,7 @@ def colorize(T, colormap='magma'):
             1-channel tensor
         colormap : str
             matplotlib colormap
-    '''
+    """
 
     cm = plt.cm.get_cmap(colormap)
 
@@ -74,22 +75,25 @@ def colorize(T, colormap='magma'):
     T = np.squeeze(np.transpose(T.cpu().numpy(), (0, 2, 3, 1)), axis=-1)
 
     # Colorize using colormap and transpose back
-    color = np.concatenate([
-        np.expand_dims(cm(T[n, ...])[..., 0:3], 0) for n in range(T.shape[0])],
-        axis=0)
+    color = np.concatenate(
+        [np.expand_dims(cm(T[n, ...])[..., 0:3], 0) for n in range(T.shape[0])], axis=0
+    )
     color = np.transpose(color, (0, 3, 1, 2))
 
     # Convert back to tensor
     return torch.from_numpy(color.astype(np.float32))
 
-def save_RPE_prediction_img(chunk,
-                        idx,
-                        chunk_idx,
-                        output_segmentation,
-                        output_segmentation_soft,
-                        # ground_truth_2d,
-                        visual_path):
-    '''
+
+def save_RPE_prediction_img(
+    chunk,
+    idx,
+    chunk_idx,
+    output_segmentation,
+    output_segmentation_soft,
+    # ground_truth_2d,
+    visual_path,
+):
+    """
     For each 2D prediction, save original scan (BW), prediction (color, BW), and GT (color, BW)
 
     Arg(s):
@@ -111,22 +115,22 @@ def save_RPE_prediction_img(chunk,
             1 element for each modality for path to save each modality img
         lesion_sizes : list[float] (optional)
             list of relative lesion sizes
-    '''
+    """
 
     n_channel = chunk.shape[1]
 
     # extract center 2d scan:
     if len(chunk.shape) == 5:
-        chunk_mod = chunk[0, n_channel  // 2, 0]
+        chunk_mod = chunk[0, n_channel // 2, 0]
     elif len(chunk.shape) == 4:
-        chunk_mod = chunk[0, n_channel  // 2]
+        chunk_mod = chunk[0, n_channel // 2]
 
     # color lesions:
-    viridis = plt.get_cmap('viridis', 256)
+    viridis = plt.get_cmap("viridis", 256)
     output_segmentation_colored = viridis(output_segmentation_soft)
     output_segmentation_gray = cm.gray(output_segmentation.astype(np.float32))
 
-    viridis = plt.get_cmap('viridis', 2)
+    viridis = plt.get_cmap("viridis", 2)
     # ground_truth_2d_colored = viridis(ground_truth_2d)
     # ground_truth_2d_gray = cm.gray(ground_truth_2d.astype(np.float32))
 
@@ -134,52 +138,55 @@ def save_RPE_prediction_img(chunk,
     overlay_eps = 0.5
     chunk_mod = chunk_mod.cpu().numpy()
     chunk_mod = min_max_normalization(
-        chunk_mod,
-        dataset_min=np.min(chunk_mod),
-        dataset_max=np.max(chunk_mod))
+        chunk_mod, dataset_min=np.min(chunk_mod), dataset_max=np.max(chunk_mod)
+    )
 
     chunk_mod_pred = cm.gray(chunk_mod)
     chunk_mod_gt = cm.gray(chunk_mod)
 
-    chunk_mod_pred[output_segmentation_soft > overlay_eps, :] = output_segmentation_colored[output_segmentation_soft > overlay_eps, :]
+    chunk_mod_pred[output_segmentation_soft > overlay_eps, :] = (
+        output_segmentation_colored[output_segmentation_soft > overlay_eps, :]
+    )
     # chunk_mod_gt[ground_truth_2d > overlay_eps, :] = ground_truth_2d_colored[ground_truth_2d > overlay_eps, :]
 
     # store predictions as png
     image_scan_gray_path = os.path.join(
         visual_path,
-        'scan_gray',
-        'scange_gray_patient%d' % (idx),
-        'scan%d.png' % (chunk_idx))
+        "scan_gray",
+        "scange_gray_patient%d" % (idx),
+        "scan%d.png" % (chunk_idx),
+    )
     image_pred_color_path = os.path.join(
         visual_path,
-        'pred_color_overlay',
-        'pred_color_patient%d' % (idx),
-        'scan%d.png' % (chunk_idx))
+        "pred_color_overlay",
+        "pred_color_patient%d" % (idx),
+        "scan%d.png" % (chunk_idx),
+    )
     image_pred_gray_path = os.path.join(
         visual_path,
-        'pred_gray',
-        'pred_gray_patient%d_' % (idx),
-        'scan%d.png' % (chunk_idx))
+        "pred_gray",
+        "pred_gray_patient%d_" % (idx),
+        "scan%d.png" % (chunk_idx),
+    )
     image_gt_color_path = os.path.join(
         visual_path,
-        'gt_color_overlay',
-        'gt_color_patient%d' % (idx),
-        'scan%d.png' % (chunk_idx))
+        "gt_color_overlay",
+        "gt_color_patient%d" % (idx),
+        "scan%d.png" % (chunk_idx),
+    )
     image_gt_gray_path = os.path.join(
-        visual_path,
-        'gt_gray',
-        'gt_gray_patient%d' % (idx),
-        'scan%d.png' % (chunk_idx))
+        visual_path, "gt_gray", "gt_gray_patient%d" % (idx), "scan%d.png" % (chunk_idx)
+    )
 
     visual_outputs = [
-        (image_scan_gray_path, cm.gray(chunk_mod), 'gray'),
-        (image_pred_color_path, chunk_mod_pred, 'viridis'),
-        (image_pred_gray_path, output_segmentation_gray, 'gray'),
+        (image_scan_gray_path, cm.gray(chunk_mod), "gray"),
+        (image_pred_color_path, chunk_mod_pred, "viridis"),
+        (image_pred_gray_path, output_segmentation_gray, "gray"),
         # (image_gt_color_path, chunk_mod_gt, 'viridis'),
         # (image_gt_gray_path, ground_truth_2d_gray, 'gray')
     ]
 
-    for (visual_path, visual, colormap) in visual_outputs:
+    for visual_path, visual, colormap in visual_outputs:
 
         if not os.path.exists(os.path.dirname(visual_path)):
             os.makedirs(os.path.dirname(visual_path))
@@ -187,15 +194,17 @@ def save_RPE_prediction_img(chunk,
         mpimg.imsave(visual_path, visual, cmap=colormap, vmin=0.0, vmax=1.0)
 
 
-def save_multi_MRI_prediction_img(chunk,
-                        idx,
-                        chunk_idx,
-                        output_segmentation,
-                        output_segmentation_soft,
-                        ground_truth_2d,
-                        visual_paths,
-                        lesion_sizes=None):
-    '''
+def save_multi_MRI_prediction_img(
+    chunk,
+    idx,
+    chunk_idx,
+    output_segmentation,
+    output_segmentation_soft,
+    ground_truth_2d,
+    visual_paths,
+    lesion_sizes=None,
+):
+    """
     For each 2D prediction, save original scan (BW), prediction (color, BW), and GT (color, BW)
 
     Arg(s):
@@ -217,7 +226,7 @@ def save_multi_MRI_prediction_img(chunk,
             1 element for each modality for path to save each modality img
         lesion_sizes : list[float] (optional)
             list of relative lesion sizes
-    '''
+    """
 
     n_channel = chunk.shape[1]
 
@@ -229,79 +238,76 @@ def save_multi_MRI_prediction_img(chunk,
     for modality_id in range(len(visual_paths)):
         # extract center 2d scan:
         if len(chunk.shape) == 5:
-            chunk_mod = chunk[0, n_channel  // 2, modality_id]
+            chunk_mod = chunk[0, n_channel // 2, modality_id]
         elif len(chunk.shape) == 4:
-            chunk_mod = chunk[0, n_channel  // 2]
+            chunk_mod = chunk[0, n_channel // 2]
 
         # color lesions:
-        viridis = plt.get_cmap('viridis', 256)
+        viridis = plt.get_cmap("viridis", 256)
         output_segmentation_colored = viridis(output_segmentation_soft)
         output_segmentation_gray = cm.gray(output_segmentation.astype(np.float32))
+
+        viridis = plt.get_cmap("viridis", 2)
+        ground_truth_2d_colored = viridis(ground_truth_2d)
+        ground_truth_2d_gray = cm.gray(ground_truth_2d.astype(np.float32))
 
         # overlay on gray scans:
         overlay_eps = 0.5
 
         chunk_mod = min_max_normalization(
-            chunk_mod,
-            dataset_min=np.min(chunk_mod),
-            dataset_max=np.max(chunk_mod))
+            chunk_mod, dataset_min=np.min(chunk_mod), dataset_max=np.max(chunk_mod)
+        )
 
         chunk_mod_pred = cm.gray(chunk_mod)
 
-        chunk_mod_pred[output_segmentation_soft > overlay_eps, :] = output_segmentation_colored[output_segmentation_soft > overlay_eps, :]
+        chunk_mod_pred[output_segmentation_soft > overlay_eps, :] = (
+            output_segmentation_colored[output_segmentation_soft > overlay_eps, :]
+        )
+        chunk_mod_gt[ground_truth_2d > overlay_eps, :] = ground_truth_2d_colored[
+            ground_truth_2d > overlay_eps, :
+        ]
 
         # store predictions as png
         image_scan_gray_path = os.path.join(
             visual_paths[modality_id],
-            'scan_gray',
-            'scange_gray_patient%d' % (idx),
-            'scan%d.png' % (chunk_idx))
+            "scan_gray",
+            "scange_gray_patient%d" % (idx),
+            "scan%d.png" % (chunk_idx),
+        )
         image_pred_color_path = os.path.join(
             visual_paths[modality_id],
-            'pred_color_overlay',
-            'pred_color_patient%d' % (idx),
-            'scan%d.png' % (chunk_idx))
+            "pred_color_overlay",
+            "pred_color_patient%d" % (idx),
+            "scan%d.png" % (chunk_idx),
+        )
         image_pred_gray_path = os.path.join(
             visual_paths[modality_id],
-            'pred_gray',
-            'pred_gray_patient%d_' % (idx),
-            'scan%d.png' % (chunk_idx))
-        
+            "pred_gray",
+            "pred_gray_patient%d_" % (idx),
+            "scan%d.png" % (chunk_idx),
+        )
+        image_gt_color_path = os.path.join(
+            visual_paths[modality_id],
+            "gt_color_overlay",
+            "gt_color_patient%d" % (idx),
+            "scan%d.png" % (chunk_idx),
+        )
+        image_gt_gray_path = os.path.join(
+            visual_paths[modality_id],
+            "gt_gray",
+            "gt_gray_patient%d" % (idx),
+            "scan%d.png" % (chunk_idx),
+        )
 
-        if ground_truth_2d is not None:
-            viridis = plt.get_cmap('viridis', 2)
-            ground_truth_2d_colored = viridis(ground_truth_2d)
-            ground_truth_2d_gray = cm.gray(ground_truth_2d.astype(np.float32))
-            chunk_mod_gt = cm.gray(chunk_mod)
-            chunk_mod_gt[ground_truth_2d > overlay_eps, :] = ground_truth_2d_colored[ground_truth_2d > overlay_eps, :]
+        visual_outputs = [
+            (image_scan_gray_path, cm.gray(chunk_mod), "gray"),
+            (image_pred_color_path, chunk_mod_pred, "viridis"),
+            (image_pred_gray_path, output_segmentation_gray, "gray"),
+            (image_gt_color_path, chunk_mod_gt, "viridis"),
+            (image_gt_gray_path, ground_truth_2d_gray, "gray"),
+        ]
 
-
-            image_gt_color_path = os.path.join(
-                visual_paths[modality_id],
-                'gt_color_overlay',
-                'gt_color_patient%d' % (idx),
-                'scan%d.png' % (chunk_idx))
-            image_gt_gray_path = os.path.join(
-                visual_paths[modality_id],
-                'gt_gray',
-                'gt_gray_patient%d' % (idx),
-                'scan%d.png' % (chunk_idx))
-
-            visual_outputs = [
-                (image_scan_gray_path, cm.gray(chunk_mod), 'gray'),
-                (image_pred_color_path, chunk_mod_pred, 'viridis'),
-                (image_pred_gray_path, output_segmentation_gray, 'gray'),
-                (image_gt_color_path, chunk_mod_gt, 'viridis'),
-                (image_gt_gray_path, ground_truth_2d_gray, 'gray')
-            ]
-        else:
-            visual_outputs = [
-                (image_scan_gray_path, cm.gray(chunk_mod), 'gray'),
-                (image_pred_color_path, chunk_mod_pred, 'viridis'),
-                (image_pred_gray_path, output_segmentation_gray, 'gray')
-            ]
-
-        for (visual_path, visual, colormap) in visual_outputs:
+        for visual_path, visual, colormap in visual_outputs:
 
             if not os.path.exists(os.path.dirname(visual_path)):
                 os.makedirs(os.path.dirname(visual_path))
@@ -309,15 +315,17 @@ def save_multi_MRI_prediction_img(chunk,
             mpimg.imsave(visual_path, visual, cmap=colormap, vmin=0.0, vmax=1.0)
 
 
-def save_MRI_prediction_img(chunk,
-                        idx,
-                        chunk_idx,
-                        output_segmentation,
-                        output_segmentation_soft,
-                        ground_truth_2d,
-                        visual_paths,
-                        lesion_sizes=None):
-    '''
+def save_MRI_prediction_img(
+    chunk,
+    idx,
+    chunk_idx,
+    output_segmentation,
+    output_segmentation_soft,
+    ground_truth_2d,
+    visual_paths,
+    lesion_sizes=None,
+):
+    """
     For each 2D prediction, save original scan (BW), prediction (color, BW), and GT (color, BW)
 
     Arg(s):
@@ -339,7 +347,7 @@ def save_MRI_prediction_img(chunk,
             1 element for each modality for path to save each modality img
         lesion_sizes : list[float] (optional)
             list of relative lesion sizes
-    '''
+    """
 
     n_channel = chunk.shape[1]
 
@@ -350,95 +358,180 @@ def save_MRI_prediction_img(chunk,
 
     # for modality_id in range(len(visual_paths)):
     modality_id = idx
-    
+    # modality_id = 0
+
     # extract center 2d scan:
     if len(chunk.shape) == 5:
-        chunk_mod = chunk[0, n_channel  // 2, modality_id]
+        chunk_mod = chunk[0, n_channel // 2, 0]
     elif len(chunk.shape) == 4:
-        chunk_mod = chunk[0, n_channel  // 2]
+        chunk_mod = chunk[0, n_channel // 2]
 
     # color lesions:
-    viridis = plt.get_cmap('viridis', 256)
-    output_segmentation_colored = viridis(output_segmentation_soft)
-    output_segmentation_gray = cm.gray(output_segmentation.astype(np.float32))
+    if len(output_segmentation_soft.shape) == 3:
+        for fedex in range(1, output_segmentation_soft.shape[0]):
+            output_segmentation_soft_temp = output_segmentation_soft[fedex, :, :]
+            viridis = plt.get_cmap("viridis", 256)
+            output_segmentation_colored = viridis(output_segmentation_soft_temp)
+            output_segmentation_gray = cm.gray(
+                (output_segmentation == fedex).astype(np.float32)
+            )
 
+            ground_truth_2d_temp  = (ground_truth_2d== fedex).astype(np.float32)
+            viridis = plt.get_cmap("viridis", 2)
+            ground_truth_2d_colored = viridis(ground_truth_2d_temp)
+            ground_truth_2d_gray = cm.gray(ground_truth_2d_temp)
 
-    # overlay on gray scans:
-    overlay_eps = 0.5
+            # overlay on gray scans:
+            overlay_eps = 0.5
 
-    chunk_mod = min_max_normalization(
-        chunk_mod,
-        dataset_min=np.min(chunk_mod),
-        dataset_max=np.max(chunk_mod))
+            chunk_mod = min_max_normalization(
+                chunk_mod, dataset_min=np.min(chunk_mod), dataset_max=np.max(chunk_mod)
+            )
 
-    chunk_mod_pred = cm.gray(chunk_mod)
+            chunk_mod_pred = cm.gray(chunk_mod)
+            chunk_mod_gt = cm.gray(chunk_mod)
 
-    chunk_mod_pred[output_segmentation_soft > overlay_eps, :] = output_segmentation_colored[output_segmentation_soft > overlay_eps, :]
+            chunk_mod_pred[output_segmentation_soft_temp > overlay_eps, :] = (
+                output_segmentation_colored[
+                    output_segmentation_soft_temp > overlay_eps, :
+                ]
+            )
+            chunk_mod_gt[ground_truth_2d_temp > overlay_eps, :] = ground_truth_2d_colored[
+                ground_truth_2d_temp > overlay_eps, :
+            ]
 
-    # store predictions as png
-    image_scan_gray_path = os.path.join(
-        visual_paths[modality_id],
-        'scan_gray',
-        'scange_gray_patient%d' % (idx),
-        'scan%d.png' % (chunk_idx))
-    image_pred_color_path = os.path.join(
-        visual_paths[modality_id],
-        'pred_color_overlay',
-        'pred_color_patient%d' % (idx),
-        'scan%d.png' % (chunk_idx))
-    image_pred_gray_path = os.path.join(
-        visual_paths[modality_id],
-        'pred_gray',
-        'pred_gray_patient%d_' % (idx),
-        'scan%d.png' % (chunk_idx))
-    
-    if ground_truth_2d is not None:
-        viridis = plt.get_cmap('viridis', 2)
+            # store predictions as png
+            image_scan_gray_path = os.path.join(
+                visual_paths[modality_id],
+                "scan_gray",
+                f"scange_gray_patient{idx}_{fedex}",
+                f"scan{chunk_idx}_{fedex}.png",
+            )
+            image_pred_color_path = os.path.join(
+                visual_paths[modality_id],
+                "pred_color_overlay",
+                f"pred_color_patient{idx}_{fedex}",
+                f"scan{chunk_idx}_{fedex}.png",
+            )
+            image_pred_gray_path = os.path.join(
+                visual_paths[modality_id],
+                "pred_gray",
+                f"pred_gray_patient{idx}_{fedex}",
+                f"scan{chunk_idx}_{fedex}.png",
+            )
+            image_gt_color_path = os.path.join(
+                visual_paths[modality_id],
+                "gt_color_overlay",
+                f"gt_color_patientf{idx}_{fedex}",
+                f"scan{chunk_idx}_{fedex}.png",
+            )
+            image_gt_gray_path = os.path.join(
+                visual_paths[modality_id],
+                "gt_gray",
+                f"gt_gray_patient{idx}_{fedex}",
+                f"scan{chunk_idx}_{fedex}.png" ,
+            )
+
+            visual_outputs = [
+                (image_scan_gray_path, cm.gray(chunk_mod), "gray"),
+                (image_pred_color_path, chunk_mod_pred, "viridis"),
+                (image_pred_gray_path, output_segmentation_gray, "gray"),
+                (image_gt_color_path, chunk_mod_gt, "viridis"),
+                (image_gt_gray_path, ground_truth_2d_gray, "gray"),
+            ]
+
+            for visual_path, visual, colormap in visual_outputs:
+
+                if not os.path.exists(os.path.dirname(visual_path)):
+                    os.makedirs(os.path.dirname(visual_path))
+
+                mpimg.imsave(visual_path, visual, cmap=colormap, vmin=0.0, vmax=1.0)
+
+    else:
+        viridis = plt.get_cmap("viridis", 256)
+        output_segmentation_colored = viridis(output_segmentation_soft)
+        output_segmentation_gray = cm.gray(output_segmentation.astype(np.float32))
+
+        viridis = plt.get_cmap("viridis", 2)
         ground_truth_2d_colored = viridis(ground_truth_2d)
         ground_truth_2d_gray = cm.gray(ground_truth_2d.astype(np.float32))
+
+        # overlay on gray scans:
+        overlay_eps = 0.5
+
+        chunk_mod = min_max_normalization(
+            chunk_mod, dataset_min=np.min(chunk_mod), dataset_max=np.max(chunk_mod)
+        )
+
+        chunk_mod_pred = cm.gray(chunk_mod)
         chunk_mod_gt = cm.gray(chunk_mod)
-        chunk_mod_gt[ground_truth_2d > overlay_eps, :] = ground_truth_2d_colored[ground_truth_2d > overlay_eps, :]
+
+        chunk_mod_pred[output_segmentation_soft > overlay_eps, :] = (
+            output_segmentation_colored[output_segmentation_soft > overlay_eps, :]
+        )
+        chunk_mod_gt[ground_truth_2d > overlay_eps, :] = ground_truth_2d_colored[
+            ground_truth_2d > overlay_eps, :
+        ]
+
+        # store predictions as png
+        image_scan_gray_path = os.path.join(
+            visual_paths[modality_id],
+            "scan_gray",
+            "scange_gray_patient%d" % (idx),
+            "scan%d.png" % (chunk_idx),
+        )
+        image_pred_color_path = os.path.join(
+            visual_paths[modality_id],
+            "pred_color_overlay",
+            "pred_color_patient%d" % (idx),
+            "scan%d.png" % (chunk_idx),
+        )
+        image_pred_gray_path = os.path.join(
+            visual_paths[modality_id],
+            "pred_gray",
+            "pred_gray_patient%d_" % (idx),
+            "scan%d.png" % (chunk_idx),
+        )
         image_gt_color_path = os.path.join(
             visual_paths[modality_id],
-            'gt_color_overlay',
-            'gt_color_patient%d' % (idx),
-            'scan%d.png' % (chunk_idx))
+            "gt_color_overlay",
+            "gt_color_patient%d" % (idx),
+            "scan%d.png" % (chunk_idx),
+        )
         image_gt_gray_path = os.path.join(
             visual_paths[modality_id],
-            'gt_gray',
-            'gt_gray_patient%d' % (idx),
-            'scan%d.png' % (chunk_idx))
+            "gt_gray",
+            "gt_gray_patient%d" % (idx),
+            "scan%d.png" % (chunk_idx),
+        )
 
         visual_outputs = [
-            (image_scan_gray_path, cm.gray(chunk_mod), 'gray'),
-            (image_pred_color_path, chunk_mod_pred, 'viridis'),
-            (image_pred_gray_path, output_segmentation_gray, 'gray'),
-            (image_gt_color_path, chunk_mod_gt, 'viridis'),
-            (image_gt_gray_path, ground_truth_2d_gray, 'gray')
+            (image_scan_gray_path, cm.gray(chunk_mod), "gray"),
+            (image_pred_color_path, chunk_mod_pred, "viridis"),
+            (image_pred_gray_path, output_segmentation_gray, "gray"),
+            (image_gt_color_path, chunk_mod_gt, "viridis"),
+            (image_gt_gray_path, ground_truth_2d_gray, "gray"),
         ]
-    else:
-         visual_outputs = [
-        (image_scan_gray_path, cm.gray(chunk_mod), 'gray'),
-        (image_pred_color_path, chunk_mod_pred, 'viridis'),
-        (image_pred_gray_path, output_segmentation_gray, 'gray')
-         ]
 
-    for (visual_path, visual, colormap) in visual_outputs:
+        for visual_path, visual, colormap in visual_outputs:
 
-        if not os.path.exists(os.path.dirname(visual_path)):
-            os.makedirs(os.path.dirname(visual_path))
+            if not os.path.exists(os.path.dirname(visual_path)):
+                os.makedirs(os.path.dirname(visual_path))
 
-        mpimg.imsave(visual_path, visual, cmap=colormap, vmin=0.0, vmax=1.0)
+            mpimg.imsave(visual_path, visual, cmap=colormap, vmin=0.0, vmax=1.0)
 
-def save_RGB_prediction_img(chunk,
-                        idx,
-                        chunk_idx,
-                        output_segmentation,
-                        output_segmentation_soft,
-                        ground_truth_2d,
-                        visual_paths,
-                        lesion_sizes=None):
-    '''
+
+def save_RGB_prediction_img(
+    chunk,
+    idx,
+    chunk_idx,
+    output_segmentation,
+    output_segmentation_soft,
+    ground_truth_2d,
+    visual_paths,
+    lesion_sizes=None,
+):
+    """
     For each 2D prediction, save original scan (BW), prediction (color, BW), and GT (color, BW)
 
     Arg(s):
@@ -460,7 +553,7 @@ def save_RGB_prediction_img(chunk,
             1 element for each modality for path to save each modality img
         lesion_sizes : list[float] (optional)
             list of relative lesion sizes
-    '''
+    """
     lesion_size = np.sum(ground_truth_2d)
 
     if lesion_size > 0 and lesion_sizes is not None:
@@ -471,19 +564,23 @@ def save_RGB_prediction_img(chunk,
             chunk = chunk[0, ...]
 
         if len(chunk.shape) != 3:
-            raise ValueError("RGB visualizations only available for tensors with 3 or 4 dimensions. Received {}-dimension tensor".format(len(chunk.shape)))
+            raise ValueError(
+                "RGB visualizations only available for tensors with 3 or 4 dimensions. Received {}-dimension tensor".format(
+                    len(chunk.shape)
+                )
+            )
 
-        chunk = np.transpose(chunk, (1, 2, 0)).copy(order='C')
+        chunk = np.transpose(chunk, (1, 2, 0)).copy(order="C")
         # Add 1's in C dimension to convert from RGB -> RGBA
         alphas = np.ones((chunk.shape[0], chunk.shape[1], 1))
         chunk = np.concatenate([chunk, alphas], axis=-1)
 
         # color lesions:
-        viridis = plt.get_cmap('viridis', 256)
+        viridis = plt.get_cmap("viridis", 256)
 
         output_segmentation_colored = viridis(output_segmentation_soft)
         output_segmentation_gray = cm.gray(output_segmentation.astype(np.float32))
-        viridis = plt.get_cmap('viridis', 2)
+        viridis = plt.get_cmap("viridis", 2)
         ground_truth_2d_colored = viridis(ground_truth_2d)
         ground_truth_2d_gray = cm.gray(ground_truth_2d.astype(np.float32))
 
@@ -491,42 +588,45 @@ def save_RGB_prediction_img(chunk,
         overlay_eps = 0.5
 
         chunk = min_max_normalization(
-            chunk,
-            dataset_min=np.min(chunk),
-            dataset_max=np.max(chunk))
-        chunk_pred = np.copy(chunk, order='C')
-        chunk_gt = np.copy(chunk, order='C')
+            chunk, dataset_min=np.min(chunk), dataset_max=np.max(chunk)
+        )
+        chunk_pred = np.copy(chunk, order="C")
+        chunk_gt = np.copy(chunk, order="C")
 
-        chunk_pred[output_segmentation_soft > overlay_eps, :] = output_segmentation_colored[output_segmentation_soft > overlay_eps, :]
-        chunk_gt[ground_truth_2d > overlay_eps, :] = ground_truth_2d_colored[ground_truth_2d > overlay_eps, :]
+        chunk_pred[output_segmentation_soft > overlay_eps, :] = (
+            output_segmentation_colored[output_segmentation_soft > overlay_eps, :]
+        )
+        chunk_gt[ground_truth_2d > overlay_eps, :] = ground_truth_2d_colored[
+            ground_truth_2d > overlay_eps, :
+        ]
 
         # concatenate the image, prediction, and ground truth overlays in one image
         combined = np.concatenate([chunk, chunk_pred, chunk_gt], axis=1)
         # Create paths to store images as .png
         image_scan_color_path = os.path.join(
-            visual_paths[modality_id],
-            'scan_color',
-            'scan_color_patient%d.png' % (idx))
+            visual_paths[modality_id], "scan_color", "scan_color_patient%d.png" % (idx)
+        )
         image_pred_color_path = os.path.join(
             visual_paths[modality_id],
-            'pred_color_overlay',
-            'pred_color_patient%d.png' % (idx))
+            "pred_color_overlay",
+            "pred_color_patient%d.png" % (idx),
+        )
         image_pred_gray_path = os.path.join(
-            visual_paths[modality_id],
-            'pred_gray',
-            'pred_gray_patient%d.png' % (idx))
+            visual_paths[modality_id], "pred_gray", "pred_gray_patient%d.png" % (idx)
+        )
         image_gt_color_path = os.path.join(
             visual_paths[modality_id],
-            'gt_color_overlay',
-            'gt_color_patient%d.png' % (idx))
+            "gt_color_overlay",
+            "gt_color_patient%d.png" % (idx),
+        )
         image_gt_gray_path = os.path.join(
-            visual_paths[modality_id],
-            'gt_gray',
-            'gt_gray_patient%d.png' % (idx))
+            visual_paths[modality_id], "gt_gray", "gt_gray_patient%d.png" % (idx)
+        )
         combined_color_path = os.path.join(
             visual_paths[modality_id],
-            'combined_color',
-            'combined_color_patient%d.png' % (idx))
+            "combined_color",
+            "combined_color_patient%d.png" % (idx),
+        )
 
         visual_outputs = [
             (image_scan_color_path, chunk),
@@ -534,9 +634,9 @@ def save_RGB_prediction_img(chunk,
             (image_pred_gray_path, output_segmentation_gray),
             (image_gt_color_path, chunk_gt),
             (image_gt_gray_path, ground_truth_2d_gray),
-            (combined_color_path, combined)
+            (combined_color_path, combined),
         ]
-        for (visual_path, visual) in visual_outputs:
+        for visual_path, visual in visual_outputs:
 
             if not os.path.exists(os.path.dirname(visual_path)):
                 os.makedirs(os.path.dirname(visual_path))
