@@ -127,7 +127,8 @@ def initialize_global_model():
         model = create_model()
 
 
-def evaluate(input_array = None,
+def evaluate(model = None,
+            input_array = None,
             single_input_path='D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\VSCAN_0012-071.png',
             do_visualize_predictions=False,
             dataset_normalization='standard',
@@ -135,7 +136,10 @@ def evaluate(input_array = None,
             dataset_stddevs=[settings.ATLAS_SD],
             n_chunk=settings.N_CHUNK,
             ):
-    global model
+    # global model
+
+    if model is None:
+        model = create_model()
 
     if do_visualize_predictions:
             # Get input modality names for ....:
@@ -197,7 +201,7 @@ def trials():
     model = create_model()
     for i in range(10):              
         t2 = time.time()*1000
-        evaluate(image, 'D:\Yasamin\Ascan-Project-Git-Test\\ImageProcessing\\testing\\im203.png', False)
+        evaluate(model, image, 'D:\Yasamin\Ascan-Project-Git-Test\\ImageProcessing\\testing\\im203.png', False)
         t3 = time.time()*1000
         print(t3-t2)
     # t2 = time.time()*1000
