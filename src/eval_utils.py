@@ -882,13 +882,12 @@ def testMulti(model,
                 is_torch=True,
                 input_type='BCDHW')
     chunk = chunk.to(model.device)
-    [chunk] = transforms.transform(
-                images_arr=[chunk],
-                random_transform_probability=0.0)
+
     start_time = time.time()
 
+    for i in range(1):
     # Forward through super resolution and segmentation model
-    output_logits = model.forward(chunk)
+        output_logits = model.forward(chunk)
 
     # average predictions for horizontally/vertically flipped images:
     output_logits = average_flip(model, output_logits[-1], chunk, test_time_flip_type)

@@ -39,13 +39,28 @@ class ImageSegmentationNode:
     def on_ros_ready(self):
         print('Connected to ROS')
 
-        # Publishers for th etwo arrays of positive indices
-        self.rpe_pub = roslibpy.Topic(self.ros, '/rpe_indices', 'std_msgs/Int32MultiArray')
-        self.ilm_pub = roslibpy.Topic(self.ros, '/ilm_indices', 'std_msgs/Int32MultiArray')
+        # Define the service
+        self.service = roslibpy.Service(self.ros, 'infer_image', 'std_srvs/Trigger')
+        self.service.advertise(self.infer_image)
 
-        # Subscribe to the image topic
-        self.image_sub = roslibpy.Topic(self.ros, 'Labview2Python', 'sensor_msgs/Image')
-        self.image_sub.subscribe(self.image_callback)
+    def infer_image(self, request, response):
+        print('Starting image inference...')
+        base64_image = request['data']
+        byte_data = base64.b64decode(base64_image)
+        img_data = np.frombuffer(byte_data, dtype=np.uint8).reshape(1024, 400, 4)
+        img_data = img_data[:,:,1]
+
+        # Perform Inference
+        rpe, ilm = self.evaluate(img_data)
+
+        # Prepare response
+        response['success'] = True
+        response['message'] = 'Inference completed'
+        response['rpe_indeces'] = rpe.flatten().tolist()
+        response['ilm_indeces'] = ilm.flatten().tolist()
+
+        return True
+        
 
 
     def image_callback(self, msg):

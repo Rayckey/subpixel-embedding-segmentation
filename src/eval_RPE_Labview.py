@@ -50,33 +50,6 @@ def create_model(
         do_visualize_predictions=True,
         device="gpu",
         n_thread=8
-        
-        # # Input settings
-        # n_chunk=settings.N_CHUNK,
-        # # Subpixel embedding network settings
-        # encoder_type_subpixel_embedding=settings.ENCODER_TYPE_SUBPIXEL_EMBEDDING,
-        # n_filters_encoder_subpixel_embedding=settings.N_FILTERS_ENCODER_SUBPIXEL_EMBEDDING,
-        # decoder_type_subpixel_embedding=settings.DECODER_TYPE_SUBPIXEL_EMBEDDING,
-        # n_filter_decoder_subpixel_embedding=settings.N_FILTER_DECODER_SUBPIXEL_EMBEDDING,
-        # output_channels_subpixel_embedding=settings.OUTPUT_CHANNELS_SUBPIXEL_EMBEDDING,
-        # output_func_subpixel_embedding=settings.OUTPUT_FUNC,
-        # # Segmentation network settings
-        # encoder_type_segmentation=settings.ENCODER_TYPE_SEGMENTATION,
-        # n_filters_encoder_segmentation=settings.N_FILTERS_ENCODER_SEGMENTATION,
-        # resolutions_subpixel_guidance=settings.RESOLUTIONS_SUBPIXEL_GUIDANCE,
-        # n_filters_subpixel_guidance=settings.N_FILTERS_SUBPIXEL_GUIDANCE,
-        # n_convolutions_subpixel_guidance=settings.N_CONVOLUTIONS_SUBPIXEL_GUIDANCE,
-        # decoder_type_segmentation=settings.DECODER_TYPE_SEGMENTATION,
-        # n_filters_decoder_segmentation=settings.N_FILTERS_DECODER_SEGMENTATION,
-        # n_filters_learnable_downsampler=settings.N_FILTERS_LEARNABLE_DOWNSAMPLER,
-        # kernel_sizes_learnable_downsampler=settings.KERNEL_SIZES_LEARNABLE_DOWNSAMPLER,
-        # # Weights settings
-        # weight_initializer=settings.WEIGHT_INITIALIZER,
-        # activation_func=settings.ACTIVATION_FUNC,
-        # use_batch_norm=settings.USE_BATCH_NORM,
-        # restore_path='D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\trained_spin_models\RPE\spin_traintest_512x200_wpos5\model-1000.pth',
-        # # Hardware settings
-        # device='cpu'
 
         ):
 
@@ -205,8 +178,8 @@ def trials():
         t3 = time.time()*1000
         print(t3-t2)
     # t2 = time.time()*1000
-    print(t2-t1)
-    print(t3-t2)
+    # print(t2-t1)
+    # print(t3-t2)
     return t2-t1
 
 if __name__ == '__main__':
