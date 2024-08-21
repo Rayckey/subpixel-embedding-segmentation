@@ -1,4 +1,4 @@
-import roslibpy
+import rospy
 import cv2
 import base64
 import sys
@@ -22,75 +22,43 @@ import global_constants as settings
 from spin_main import run
 import data_utils
 import pdb
-
-
+import numpy as np
+from std_msgs.msg import UInt8MultiArray, MultiArrayLayout, MultiArrayDimension, UInt8, Header, Int32MultiArray
+import sensor_msgs.msg
 model = None
-# model_path = 'D:\Yasamin\ImageProcessing\subpixel-embedding-segmentation\src'
-# sys.path.append(model_path)
 
-# from eval_RPE_Labview import create_model, evaluate
 
 class ImageSegmentationNode:
     def __init__(self):
         # Load or initialize your model here
         self.model = self.create_model()
-        self.ros = roslibpy.Ros(host='localhost', port=9090)
-        self.ros.on_ready(self.on_ros_ready, run_in_thread=False)
-        self.ros.run()
-
-    def on_ros_ready(self):
-        print('Connected to ROS')
-
-        # Publishers for the two arrays of positive indices
-        self.rpe_pub = roslibpy.Topic(self.ros, 'rpe_indices', 'std_msgs/Int32MultiArray')
-        self.ilm_pub = roslibpy.Topic(self.ros, 'ilm_indices', 'std_msgs/Int32MultiArray')
-        self.image_pub = roslibpy.Topic(self.ros, 'Python2Labview', 'sensor_msgs/Image')
-        # Subscribe to the image topic
-        self.image_sub = roslibpy.Topic(self.ros, 'Labview2Python', 'sensor_msgs/Image')
-        self.image_sub.subscribe(self.image_callback)
-
+        rospy.init_node('read_write_node', anonymous = True)
+        self.rpe_pub = rospy.Publisher('rpe_indices', Int32MultiArray, queue_size = 1)
+        self.ilm_pub = rospy.Publisher('ilm_indices', Int32MultiArray, queue_size = 1)
+        rospy.Subscriber('Labview2Python', sensor_msgs.msg.Image, self.image_callback)
 
     def image_callback(self, msg):
         print("Starting image listener...")
 
-        width = msg['width']
-        height = msg['height']
-        byte_data = base64.b64decode(msg['data'])
-        img_data = np.frombuffer(byte_data, dtype=np.uint8).reshape(height, width,4)
-        img_data = img_data[:,:,1]
-    
-        # processed_img = np.flipud(img_data) # replace with image processing function
+        width = msg.width
+        height = msg.height
+        img_data = np.array(list(msg.data)).reshape(height, width)
+        
         rpe, ilm = self.evaluate(img_data)
-
-        # Publish the results
-        self.image_pub.publish(msg)
-        self.publish_indices(rpe, ilm)
         print("Done.")
 
-    
+        # Publish the results
+        self.publish_indices(rpe, ilm)
+        print("Published message")
+
     def publish_indices(self, class1_indices, class2_indices):
         # Publish the indices as Int32MultiArray messages
-        class1_msg = roslibpy.Message({'data': class1_indices.flatten().tolist()})
-        class2_msg = roslibpy.Message({'data': class2_indices.flatten().tolist()})
-        
+        class1_msg = Int32MultiArray
+        class1_msg.data = class1_indices.flatten().tolist()
+        class2_msg = Int32MultiArray
+        class2_msg.data = class2_indices.flatten().tolist()        
         self.rpe_pub.publish(class1_msg)
         self.ilm_pub.publish(class2_msg)
-    
-    def run(self, msg):
-        try:
-            while not self.ros.is_connected:
-                print('Waiting for ROS connection...')
-                time.sleep(1)
-            print('ROS connection established. Node is running...')
-            while self.ros.is_connected:
-                # node.image_pub.publish(msg)
-                time.sleep(5)
-                pass
-
-        except KeyboardInterrupt:
-            print('Shutting down ROS node...')
-            self.ros.terminate()
-
 
     def create_model(
             multimodal_scan_paths="validation/multi-vscans-val-images.txt",
@@ -232,15 +200,8 @@ class ImageSegmentationNode:
         # np.column_stack(results_indices).astype(np.float32)
         return rpe, ilm
 
-
 if __name__ == '__main__':
-    image = Image.open('D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\VSCAN_0012-071.png') # np.loadtxt('D:\Yasamin\Ascan-Project-Git-Test\ImageProcessing\\testing\\41060326.txt') # 
-    # pdb.set_trace()
-    node = ImageSegmentationNode()
-    image = ImageOps.grayscale(image)
-    image_array = np.repeat(np.array(image, dtype='uint8'), 4, axis=1).flatten().tolist()
-    msg = roslibpy.Message({'data':image_array, 'height':1024, 'width':400,'encoding':'mono8'})
-    # node.image_pub.publish(msg)
-    node.run(msg)
-    
-    # rpe, ilm = node.evaluate()
+    # Initialize model
+    print('Starting...')   
+    node = ImageSegmentationNode
+    rospy.spin()

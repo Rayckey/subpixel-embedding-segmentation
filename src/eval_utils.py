@@ -885,9 +885,8 @@ def testMulti(model,
 
     start_time = time.time()
 
-    for i in range(1):
     # Forward through super resolution and segmentation model
-        output_logits = model.forward(chunk)
+    output_logits = model.forward(chunk)
 
     # average predictions for horizontally/vertically flipped images:
     output_logits = average_flip(model, output_logits[-1], chunk, test_time_flip_type)
