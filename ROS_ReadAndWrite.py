@@ -45,6 +45,7 @@ class ImageSegmentationNode:
         self.rpe_pub = roslibpy.Topic(self.ros, 'rpe_indices', 'std_msgs/Int32MultiArray')
         self.ilm_pub = roslibpy.Topic(self.ros, 'ilm_indices', 'std_msgs/Int32MultiArray')
         self.image_pub = roslibpy.Topic(self.ros, 'Python2Labview', 'sensor_msgs/Image')
+        self.str_pub = roslibpy.Topic(self.ros, 'chatter','std_msgs/String')
         # Subscribe to the image topic
         self.image_sub = roslibpy.Topic(self.ros, 'Labview2Python', 'sensor_msgs/Image')
         self.image_sub.subscribe(self.image_callback)
@@ -64,6 +65,8 @@ class ImageSegmentationNode:
 
         # Publish the results
         self.image_pub.publish(msg)
+        chatter = roslibpy.Message({'data': "Hello"})
+        self.str_pub.publish(chatter)
         self.publish_indices(rpe, ilm)
         print("Done.")
 
