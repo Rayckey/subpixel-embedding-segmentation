@@ -1,17 +1,17 @@
 export CUDA_VISIBLE_DEVICES=0
 
 python3 src/train_spin.py \
---train_multimodal_scan_paths training/multi-vscans-train-images.txt \
---train_ground_truth_path training/multi-vscans-train-masks.txt \
---val_multimodal_scan_paths validation/multi-vscans-val-images.txt \
---val_ground_truth_path validation/multi-vscans-val-masks.txt \
+--train_multimodal_scan_paths training/bscans-train-images.txt \
+--train_ground_truth_path training/bscans-train-masks.txt \
+--val_multimodal_scan_paths validation/bscans-val-images.txt \
+--val_ground_truth_path validation/bscans-val-masks.txt \
 --n_batch 4 \
 --n_chunk 1 \
 --n_height 1024 \
 --n_width 400 \
 --dataset_normalization standard \
---dataset_means 47.034603 \
---dataset_stddevs 22.447832 \
+--dataset_means 49.757008 \
+--dataset_stddevs 27.255404 \
 --encoder_type_subpixel_embedding resnet5_subpixel_embedding \
 --n_filters_encoder_subpixel_embedding 16 16 16 \
 --decoder_type_subpixel_embedding subpixel \
